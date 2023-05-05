@@ -4,16 +4,17 @@ import time
 import pytz
 import datetime
 
+utc = pytz.UTC
+
+# Please modify the following variables before running
 monitor_period = 3600 # in seconds
 check_interval = 60 # in seconds
-utc = pytz.UTC
+region = ''
+topic_arn = ''
 
 # Set up a connection to S3 and SNS
 s3 = boto3.client('s3')
-sns = boto3.client('sns', region_name='')
-
-# Set up SNS topic
-topic_arn = ''
+sns = boto3.client('sns', region_name=region)
 
 # List all the buckets at the start of the script
 response = s3.list_buckets()
