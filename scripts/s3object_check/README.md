@@ -44,5 +44,4 @@ You can run this script in three methods:
 
    `docker run -d --name s3object-monitor-container -v /aws/credentials/path:/home/appuser/.aws/config s3object-monitor`
 
-   Note: Before running the container, you will need to configure the script with the appropriate S3 and SNS credentials and settings, as well as the topic ARN and region. You can pass the configuration settings at runtime or by modifying the script itself.
-
+   Note: Before building the Docker image, you will need to configure the script with the required values for variables monitor_period, check_interval, region, and topic_arn. The AWS credentials can be passed as shown in the above command.
