@@ -11,8 +11,8 @@ import boto3
     5. tags and corresponding instances and volumes.
 '''
 
-hosted_zone_id = "Z05545191UN45W7QRPL9M"
-eip = ["13.200.50.178"]
+hosted_zone_id = "Z05545191UNEXAMPLE"
+eip = ["XX.XXX.XX.XXX"]
 group_name = "dev"
 
 route53 = boto3.client('route53')
