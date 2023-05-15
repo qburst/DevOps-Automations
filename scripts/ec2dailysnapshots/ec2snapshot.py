@@ -4,7 +4,7 @@ from botocore.exceptions import ProfileNotFound
 
 #Modify the following variables before running the scripts
 region='us-east-1'
-file_path= '/home/abhishekarun/git/DevOps-Automations/scripts/ec2dailysnapshots/instance_ids.csv'
+file_path= ''
 Numberofsnap = 2
 
 #Setting up connection and verfying the profile name
