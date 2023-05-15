@@ -4,6 +4,12 @@ terraform {
 
 provider "aws" {
   region = var.region
+  default_tags {
+    tags = {
+      Environment = "Test"
+      Project     = "QBurst"
+    }
+  }
 }
 
 variable "region" {

@@ -1,3 +1,4 @@
 *.tfstate*
 backend.tf
 .terraform*
+*.swp

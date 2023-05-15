@@ -1,5 +1,5 @@
 module "vpc" {
-  source                                  = "./modules/vpc"
+  source                                  = "../../modules/vpc"
   name_prefix                             = "qburst"
   ipv4_primary_cidr_block                 = "172.16.0.0/16"
   ipv4_additional_cidr_block_associations = ["172.20.0.0/16","172.21.0.0/16"]
