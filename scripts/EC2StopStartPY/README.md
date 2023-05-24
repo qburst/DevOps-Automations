@@ -11,15 +11,16 @@ The EC2 Stop/Start Script is a Python script designed to automate the process of
 
 ### EXECUTION:
 Run the below command:
+
             python3 ec2_stop_start.py -p <profile> -r <region>
 Please replace the profile with AWS credential profile and region
 
 ### CONFIGURATION:
 The script relies on specific tags assigned to your EC2 instances to determine their start and stop schedules. These tags are as follows:
 
-   “auto:start”: Specifies the start schedule for an instance. The tag value should be a cron expression representing the desired start time.
+      “auto:start”: Specifies the start schedule for an instance. The tag value should be a cron expression representing the desired start time.
 
-   “auto:stop”: Specifies the stop schedule for an instance. The tag value should be a cron expression representing the desired stop time.
+      “auto:stop”: Specifies the stop schedule for an instance. The tag value should be a cron expression representing the desired stop time.
 
 ## Example for creating tags:
              Key                                                Value
@@ -33,4 +34,3 @@ The script relies on specific tags assigned to your EC2 instances to determine t
     • Creates a list of instances that need to be stopped based on the current time and the stop schedules.
     • Starts the instances in the start list.
     • Stops the instances in the stop list.
-
