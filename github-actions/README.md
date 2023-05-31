@@ -20,19 +20,19 @@ It also tests each deployment for a working url and deployed image version.
 
  1. Ensure the required Google Cloud APIs are enabled:
 
-   Cloud Run            run.googleapis.com
-   Artifact Registry    artifactregistry.googleapis.com
+        Cloud Run            run.googleapis.com
+        Artifact Registry    artifactregistry.googleapis.com
 
  2. Create and configure Workload Identity Federation for GitHub (https://github.com/google-github-actions/auth#setting-up-workload-identity-federation)
 
  3. Ensure the required IAM permissions are granted
 
-    Cloud Run
-      roles/run.admin
-      roles/iam.serviceAccountUser     (to act as the Cloud Run runtime service account)
+        Cloud Run
+            * roles/run.admin
+            * roles/iam.serviceAccountUser     (to act as the Cloud Run runtime service account)
 
-    Artifact Registry
-      roles/artifactregistry.admin     (project or repository level)
+        Artifact Registry
+            * roles/artifactregistry.admin     (project or repository level)
 
     NOTE: You should always follow the principle of least privilege when assigning IAM roles
 
