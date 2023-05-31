@@ -1,9 +1,9 @@
-# Google Cloud-Run Docker 
+## Google Cloud-Run Docker 
 
 This workflow build and push a Docker container to Google Artifact Registry and deploy it on Cloud Run when a release is triggered.
 It also tests each deployment for a working url and deployed image version.
 
-## Overview:
+**Overview:**
  1. Authenticate to Google Cloud
  2. Authenticate Docker to Artifact Registry
  3. Build a docker container
@@ -15,7 +15,7 @@ It also tests each deployment for a working url and deployed image version.
  9. Test production 
 
 
-## To configure this workflow:
+**To configure this workflow:**
 
 
  1. Ensure the required Google Cloud APIs are enabled:
@@ -27,7 +27,7 @@ It also tests each deployment for a working url and deployed image version.
 
  3. Ensure the required IAM permissions are granted
 
-   Cloud Run
+    Cloud Run
       roles/run.admin
       roles/iam.serviceAccountUser     (to act as the Cloud Run runtime service account)
 
