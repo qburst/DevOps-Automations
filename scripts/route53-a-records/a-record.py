@@ -24,6 +24,7 @@ def check_if_hosted_zone_exist():
         exit(1)
 
 def check_eip_association(address):
+    """ Checks if the EIPs are already associated to resources."""
     for a in address["Addresses"]:
         if "InstanceId" not in a:
             print("{0} is not attached to any instance.".format(a['PublicIp']))
