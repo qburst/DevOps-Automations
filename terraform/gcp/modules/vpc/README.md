@@ -34,21 +34,21 @@ You can go to the examples folder, however the usage of the module could be like
     All inputs :heavy_check_mark: must be configured.
     Any with :x: can be ignored, but can be configurd if you want.
 
-    | Name        | Description | Required | Type | Default |
-    | ----------- | ----------- | -------- | ---- | ------- |
-    | name_prefix | All named components will have this variable added as a prefix | :x: | string | "common" |
-    | subnet_config | The list of subnets being created | :x: | list(object()) | |
+| Name        | Description | Required | Type | Default |
+| ----------- | ----------- | -------- | ---- | ------- |
+| name_prefix | All named components will have this variable added as a prefix | :x: | string | "common" |
+| subnet_config | The list of subnets being created | :x: | list(object()) | |
 
 **subnet_config inputs**
     The subnet_config list contains objects, where each object represents a subnet. Each object has the following inputs (please see examples folder for additional references):
 
-    | Name        | Description | Required | Type | Default |
-    | ----------- | ----------- | -------- | ---- | ------- |
-    | name | The name of the subnet being created | :heavy_check_mark: | string | |
-    | subnet_region | The region where the subnet will be created | :heavy_check_mark: | string | |
-    | subnet_ip_cidr_range| The IP and CIDR range of the subnet being created | :heavy_check_mark: | string | |
-    | nat_gw_enabled | A boolean flag to enable/disable a NAT gw for the subnet | :x: | bool | false |
-    | nat_ip_allocate_option | A string to select nat ip allocation option | :x: | string | "AUTO_ONLY" |
+| Name        | Description | Required | Type | Default |
+| ----------- | ----------- | -------- | ---- | ------- |
+| name | The name of the subnet being created | :heavy_check_mark: | string | |
+| subnet_region | The region where the subnet will be created | :heavy_check_mark: | string | |
+| subnet_ip_cidr_range| The IP and CIDR range of the subnet being created | :heavy_check_mark: | string | |
+| nat_gw_enabled | A boolean flag to enable/disable a NAT gw for the subnet | :x: | bool | false |
+| nat_ip_allocate_option | A string to select nat ip allocation option | :x: | string | "AUTO_ONLY" |
 
 
     NOTE: nat_ip_allocate_option supports only two options "AUTO_ONLY" and "MANUAL_ONLY"
