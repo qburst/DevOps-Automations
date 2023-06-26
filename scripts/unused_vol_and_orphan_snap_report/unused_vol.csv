@@ -1,0 +1,3 @@
+VOLUME_ID,STATUS,REGION,ACTION,DESC
+vol-09ca939fc08f7cedc,available,ap-south-1,DEL,volume is not attached to an instance
+vol-0c5208ad4ed07f24a,available,us-east-1,DEL,volume is not attached to an instance
