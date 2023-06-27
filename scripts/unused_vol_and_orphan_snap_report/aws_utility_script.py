@@ -34,17 +34,14 @@ def list_all_regions():
 # get the unused volume for all region
 def get_unused_vol(region):
     client = boto3.client('ec2', region_name=region)
-    for count, vol in enumerate(client.describe_volumes()['Volumes']):
-        count+=1
+    for _, vol in enumerate(client.describe_volumes()['Volumes']):
         attachments = vol['Attachments']
         state = vol['State']
         if not attachments and state == "available":
-            # print("{}. VOLUME_ID:{}, STATUS:{}, ACTION: DEL".format(count, vol['VolumeId'], vol['State']))
             row = [vol['VolumeId'],vol['State'], region, "DEL", "volume is not attached to an instance"]
             del_volume(client, vol['VolumeId'])
             return row
         elif state == "error":
-            # print("{}. VOLUME_ID:{}, STATUS:{}, ACTION: DEL".format(count, vol['VolumeId'], vol['State']))
             row = [vol['VolumeId'],vol['State'], region, "DEL", "EBS volume has failed"]
             del_volume(client, vol['VolumeId'])
             return row
@@ -144,6 +141,12 @@ def renamed_old_report():
     else:
         pass
 
+def verify_args(args):
+    if args.action == None:
+        print("usage: aws_utility_script.py -a report_unused_vol or aws_utility_script.py -a report_orphan_snapshot")
+        sys.exit(2)
+    return args
+
 # get orphan snapshot for all regions
 def get_orphan_snapshot_and_gen_report(aws_account_id, orphan_snap_report_file, region_filename):
     listOfRegions = list_all_regions()
@@ -171,7 +174,9 @@ def main():
 
     parser = argparse.ArgumentParser(description="Script to report unused volumes and orphan snapshots to CSV file.")
     parser.add_argument("-a","--action", dest="action", type=str, help="Action can be either of the two values report_unused_vol / report_orphan_snapshot")
+    
     args = parser.parse_args()
+    verify_args(args)
     action = args.action
 
     check_aws_cli()
@@ -184,7 +189,7 @@ def main():
         get_orphan_snapshot_and_gen_report(aws_account_id, orphan_snap_report_file, region_filename)
         set_default_region(region_filename)
     else:
-        print("usage: remove_unused_vol.py -a report_unused_vol or remove_unused_vol.py -a report_orphan_snapshot]")
+        print("usage: aws_utility_script.py -a report_unused_vol or aws_utility_script.py -a report_orphan_snapshot")
 
 if __name__ == '__main__':
     main()
