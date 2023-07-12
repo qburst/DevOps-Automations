@@ -9,3 +9,11 @@ This are various examples build using the above modules.
 
 ## Prerequisites
 - Terraform 1.x.x
+
+## Module List
+### 1. VPC with Multiple subnets - AWS 
+
+    This module will create a fully functional VPC with multiple subnets in AWS via Terraform.
+### 2. VPC - GCP
+
+    This module will create a fully functional VPC in GCP via Terraform.
