@@ -1,0 +1,206 @@
+name: Build and Deploy to Cloud Run
+
+on:
+  release:
+    types: [published]
+
+
+jobs:
+  build-push:
+    # Add 'id-token' with the intended permissions for workload identity federation
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+    outputs:
+      git-tag: ${{ steps.tag.outputs.tag }}
+    runs-on: ubuntu-latest
+    environment: dev
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      # Authenticate to Google Cloud 
+      - name: Google Auth
+        id: auth
+        uses: 'google-github-actions/auth@v0'
+        with:
+          token_format: 'access_token'
+          workload_identity_provider: '${{ secrets.WIF_PROVIDER }}' # e.g. - projects/123456789/locations/global/workloadIdentityPools/my-pool/providers/my-provider
+          service_account: '${{ secrets.WIF_SERVICE_ACCOUNT }}' # e.g. - my-service-account@my-project.iam.gserviceaccount.com
+
+      # NOTE: Alternative option - authentication via credentials json
+      # - name: Google Auth
+      #   id: auth
+      #   uses: 'google-github-actions/auth@v0'
+      #   with:
+      #     credentials_json: '${{ secrets.GCP_CREDENTIALS }}''
+
+      # BEGIN - Docker auth and build (NOTE: If you already have a container image, these Docker steps can be omitted)
+
+      # Authenticate Docker to Google Cloud Artifact Registry
+        
+      - name: Docker Auth
+        id: docker-auth
+        uses: 'docker/login-action@v1'
+        with:
+          username: 'oauth2accesstoken'
+          password: '${{ steps.auth.outputs.access_token }}'
+          registry: '${{ vars.GAR_LOCATION }}-docker.pkg.dev'
+          
+      - name: Get Tag
+        id: tag
+        run: echo "tag=$(git describe --tags --abbrev=0)" >> $GITHUB_OUTPUT
+
+      - name: Build and Push Container
+        run: |-
+          echo ${{ steps.tag.outputs.tag }}
+          echo "${{ steps.tag.outputs.tag }}"
+          docker build -t "${{ vars.GAR_LOCATION }}-docker.pkg.dev/${{ vars.PROJECT_ID }}/${{ vars.SERVICE }}/${{ vars.SERVICE }}:${{ steps.tag.outputs.tag }}" ./
+          docker push "${{ vars.GAR_LOCATION }}-docker.pkg.dev/${{ vars.PROJECT_ID }}/${{ vars.SERVICE }}/${{ vars.SERVICE }}:${{ steps.tag.outputs.tag }}"
+
+      # END - Docker auth and build
+      
+      
+  deploy-to-staging:
+      needs: build-push
+      permissions:
+        id-token: 'write'
+        issues: 'write'
+      environment: dev
+      runs-on: ubuntu-latest
+
+      steps:
+        # Authenticate to Google Cloud
+      - name: Google Auth
+        id: auth
+        uses: 'google-github-actions/auth@v0'
+        with:
+          token_format: 'access_token'
+          workload_identity_provider: '${{ secrets.WIF_PROVIDER }}' # e.g. - projects/123456789/locations/global/workloadIdentityPools/my-pool/providers/my-provider
+          service_account: '${{ secrets.WIF_SERVICE_ACCOUNT }}' # e.g. - my-service-account@my-project.iam.gserviceaccount.com
+
+
+      - name: Deploy to Cloud Run
+        id: deploy
+        uses: google-github-actions/deploy-cloudrun@v0
+        with:
+          service: ${{ vars.SERVICE }}
+          region: ${{ vars.REGION }}
+          # NOTE: If using a pre-built image, update the image name here
+          image: ${{ vars.GAR_LOCATION }}-docker.pkg.dev/${{ vars.PROJECT_ID }}/${{ vars.SERVICE }}/${{ vars.SERVICE }}:${{ needs.build-push.outputs.git-tag }}
+
+  test-staging:
+      needs: 
+        - build-push
+        - deploy-to-staging
+      permissions:
+        id-token: 'write'
+        issues: 'write'
+      environment: dev
+      runs-on: ubuntu-latest
+
+      steps:  
+        - name: Test staging  
+          uses: cygnetdigital/wait_for_response@v2.0.0
+          with:
+            url: ${{ vars.APP_URL }} # e.g. - https://actions-demo-lkxshjwprq-uc.a.run.app/
+            responseCode: '200,500'
+            timeout: 2000
+            interval: 500
+            
+          # Authenticate to Google Cloud
+        - name: Google Auth
+          id: auth
+          uses: 'google-github-actions/auth@v0'
+          with:
+            token_format: 'access_token'
+            workload_identity_provider: '${{ secrets.WIF_PROVIDER }}' # e.g. - projects/123456789/locations/global/workloadIdentityPools/my-pool/providers/my-provider
+            service_account: '${{ secrets.WIF_SERVICE_ACCOUNT }}' # e.g. - my-service-account@my-project.iam.gserviceaccount.com
+            
+        - name: 'Set up Cloud SDK'
+          uses: 'google-github-actions/setup-gcloud@v1'
+          with:
+            version: '>= 363.0.0'
+          # Use cloud CLI to run commands needed to check image version
+          
+        - name: 'Use gcloud CLI'
+          id: get-tag
+          run: |
+            echo "tag=$(gcloud run services describe ${{ vars.SERVICE }} --region=${{ vars.REGION }} | grep Image | awk -F: '{print $3}')" >> $GITHUB_OUTPUT
+        
+        - name: Check image version
+          if: ${{steps.get-tag.outputs.tag != needs.build-push.outputs.git-tag }}
+          run: |-
+            echo "Error: Version mismatch, Expected ${{needs.build-push.outputs.git-tag}} but got ${{steps.get-tag.outputs.tag}}"
+            exit 1
+          
+  deploy-to-production:
+        needs:
+          - build-push
+          - test-staging
+        permissions:
+          id-token: 'write'
+        environment: prod
+        runs-on: ubuntu-latest
+
+        steps:
+
+          - name: Google Auth
+            id: auth
+            uses: 'google-github-actions/auth@v0'
+            with:
+              token_format: 'access_token'
+              workload_identity_provider: '${{ secrets.WIF_PROVIDER }}' # e.g. - projects/123456789/locations/global/workloadIdentityPools/my-pool/providers/my-provider
+              service_account: '${{ secrets.WIF_SERVICE_ACCOUNT }}' # e.g. - my-service-account@my-project.iam.gserviceaccount.com
+
+
+          - name: Deploy to Cloud Run
+            id: deploy
+            uses: google-github-actions/deploy-cloudrun@v0
+            with:
+              service: ${{ vars.SERVICE }}
+              region: ${{ vars.REGION }}
+              image: ${{ vars.GAR_LOCATION }}-docker.pkg.dev/${{ vars.PROJECT_ID }}/${{ vars.SERVICE }}/${{ vars.SERVICE }}:${{ needs.build-push.outputs.git-tag }}
+  test-production:
+      needs: 
+        - build-push
+        - deploy-to-production
+      permissions:
+        id-token: 'write'
+        issues: 'write'
+      environment: prod
+      runs-on: ubuntu-latest
+
+      steps:  
+        - name: Test staging  
+          uses: cygnetdigital/wait_for_response@v2.0.0
+          with:
+            url: ${{ vars.APP_URL }} # e.g. - https://actions-demo-lkxshjwprq-uc.a.run.app/
+            responseCode: '200,500'
+            timeout: 2000
+            interval: 500
+          
+        - name: Google Auth
+          id: auth
+          uses: 'google-github-actions/auth@v0'
+          with:
+            token_format: 'access_token'
+            workload_identity_provider: '${{ secrets.WIF_PROVIDER }}' # e.g. - projects/123456789/locations/global/workloadIdentityPools/my-pool/providers/my-provider
+            service_account: '${{ secrets.WIF_SERVICE_ACCOUNT }}' # e.g. - my-service-account@my-project.iam.gserviceaccount.com
+            
+        - name: 'Set up Cloud SDK'
+          uses: 'google-github-actions/setup-gcloud@v1'
+          with:
+            version: '>= 363.0.0'
+
+        - name: 'Use gcloud CLI'
+          id: get-tag
+          run: |
+            echo "tag=$(gcloud run services describe ${{ vars.SERVICE }} --region=${{ vars.REGION }} | grep Image | awk -F: '{print $3}')" >> $GITHUB_OUTPUT
+        
+        - name: Check image version
+          if: ${{steps.get-tag.outputs.tag != needs.build-push.outputs.git-tag }}
+          run: |-
+            echo "Error: Version mismatch, Expected ${{needs.build-push.outputs.git-tag}} but got ${{steps.get-tag.outputs.tag}}"
+            exit 1
