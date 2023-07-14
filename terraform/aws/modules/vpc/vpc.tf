@@ -76,8 +76,8 @@ resource "aws_nat_gateway" "default" {
 
 # Route Tables
 resource "aws_route_table" "public" {
-  count = length(var.public_subnets_cidr)
-  vpc_id                  = aws_vpc.default.id
+  count  = length(var.public_subnets_cidr)
+  vpc_id = aws_vpc.default.id
 
   tags = {
     Name = "${var.name_prefix}-public-route-table-${count.index}"
@@ -85,8 +85,8 @@ resource "aws_route_table" "public" {
 }
 
 resource "aws_route_table" "private" {
-  count = length(var.private_subnets_cidr)
-  vpc_id                  = aws_vpc.default.id
+  count  = length(var.private_subnets_cidr)
+  vpc_id = aws_vpc.default.id
 
   tags = {
     Name = "${var.name_prefix}-private-route-table-${count.index}"
@@ -96,14 +96,14 @@ resource "aws_route_table" "private" {
 resource "aws_route_table_association" "private" {
   count = length(var.private_subnets_cidr)
 
-  subnet_id = element(aws_subnet.private.*.id, count.index)
+  subnet_id      = element(aws_subnet.private.*.id, count.index)
   route_table_id = element(aws_route_table.private.*.id, count.index)
 }
 
 resource "aws_route_table_association" "public" {
   count = length(var.public_subnets_cidr)
 
-  subnet_id = element(aws_subnet.public.*.id, count.index)
+  subnet_id      = element(aws_subnet.public.*.id, count.index)
   route_table_id = element(aws_route_table.public.*.id, count.index)
 }
 
@@ -120,5 +120,5 @@ resource "aws_route" "internet_gateway" {
 
   route_table_id         = element(aws_route_table.public.*.id, count.index)
   destination_cidr_block = "0.0.0.0/0"
-  gateway_id         = element(aws_internet_gateway.default.*.id, 0)
+  gateway_id             = element(aws_internet_gateway.default.*.id, 0)
 }
