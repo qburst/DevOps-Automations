@@ -19,3 +19,7 @@ This are various examples build using the above modules.
 [VPC - GCP](/terraform/gcp/modules/vpc/vpc.tf)
 
     This module will create a fully functional VPC in GCP via Terraform.
+### 3. Create S3 buckets - AWS
+[S3 - GCP](/terraform/aws/modules/s3/s3.tf)
+
+    This module will create S3 buckets with logging, and version in AWS via Terraform
