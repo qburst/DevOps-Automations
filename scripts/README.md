@@ -1,7 +1,5 @@
 # Scripts
 
-This is a collection of various scripts that have been developed and utilized by the QBurst DevOps team over time.
-
 ## 1. Find underutilized EC2 machines
 [Under Utilized EC2](/scripts/cpu_traffic_multi_region_under-utilized.py)
 
