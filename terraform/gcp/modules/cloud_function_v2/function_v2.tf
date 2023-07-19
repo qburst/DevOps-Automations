@@ -16,7 +16,7 @@ resource "google_storage_bucket" "default" {
 data "archive_file" "default" {
   type        = "zip"
   output_path = "/tmp/function-source.zip"
-  source_dir  = "source"
+  source_dir  = var.source_dir
 }
 
 resource "google_storage_bucket_object" "object" {

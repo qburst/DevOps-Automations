@@ -7,7 +7,11 @@ variable "description" {
     type = string
     default = "A new function"
 }
-
+variable "source_dir" {
+  type = string
+  default = "source"
+  
+}
 variable "location" {
     type = string
 }

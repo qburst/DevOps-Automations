@@ -8,7 +8,7 @@ This module will create a simple cloud function with an http trigger via Terrafo
 - An IAM policy to make the function public if required
 
     NOTE:
-    - There should be a "source" folder containing the source code for the cloud function in the same directory
+    - There should be a "source" folder containing the source code for the cloud function in the same directory if source_dir is not specified
     - For cloud function to be made public you need roles/iam.securityAdmin
 
 ## Inputs
@@ -20,6 +20,7 @@ This module will create a simple cloud function with an http trigger via Terrafo
 | ----------- | ----------- | -------- | ---- | ------- |
 | function_name | The name of the function being created | :heavy_check_mark: | string | |
 | description | A breif description of the function | :x: | string | |
+| source_dir | The directory containing the source code | :x: | string | "source" |
 | location | The region where the subnet will be created | :heavy_check_mark: | string | |
 | source_bucket | A bucket to store the source code | :x: | string | |
 | make_public | A boolean flag to make the function public | :x: | bool | false |
