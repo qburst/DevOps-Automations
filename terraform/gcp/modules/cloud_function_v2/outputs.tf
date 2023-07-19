@@ -1,5 +1,5 @@
 output "name" {
-    value = var.function_name
+  value = var.function_name
 }
 output "bucket_name" {
   value = local.bucket_name

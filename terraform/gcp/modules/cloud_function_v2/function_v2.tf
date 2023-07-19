@@ -7,7 +7,7 @@ resource "random_id" "default" {
 }
 
 resource "google_storage_bucket" "default" {
-  count = length(var.source_bucket) > 0 ? 0 : 1
+  count                       = length(var.source_bucket) > 0 ? 0 : 1
   name                        = "${random_id.default.hex}-gcf-source" # Every bucket name must be globally unique
   location                    = var.location
   uniform_bucket_level_access = true
@@ -49,10 +49,10 @@ resource "google_cloudfunctions2_function" "default" {
 }
 
 resource "google_cloud_run_service_iam_member" "invoker" {
-  count = var.make_public == true ? 1 : 0
-  depends_on = [ google_cloudfunctions2_function.default ]
-  location = var.location
-  service = var.function_name
-  role = "roles/run.invoker"
-  member = "allUsers"
+  count      = var.make_public == true ? 1 : 0
+  depends_on = [google_cloudfunctions2_function.default]
+  location   = var.location
+  service    = var.function_name
+  role       = "roles/run.invoker"
+  member     = "allUsers"
 }
