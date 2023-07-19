@@ -32,9 +32,9 @@ for region in regions:
                Statistics=['Maximum'],
                Dimensions=[{'Name':'InstanceId', 'Value':eachinstance}]
            )      
-               for nw in traffic['Datapoints']:
-                if 'Maximum' in nw:
-                 if nw['Maximum'] < 1000:                  
+               for network in traffic['Datapoints']:
+                if 'Maximum' in network:
+                 if network['Maximum'] < 1000:                  
                   print("Instance Id:", eachinstance,end=" ")
-                  print("CPU:",value['Maximum'], "Traffic:",nw['Maximum'])
+                  print("CPU:",value['Maximum'], "Traffic:",network['Maximum'])
 
