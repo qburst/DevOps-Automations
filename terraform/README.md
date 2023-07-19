@@ -22,7 +22,7 @@ This are various examples build using the above modules.
 
     This module will create S3 buckets with logging, and version in AWS via Terraform
 
-### 2. Cloud Function v2 - GCP
+### 4. Cloud Function v2 - GCP
 [Cloud Function v2 - GCP](/terraform/gcp/modules/cloud_function_v2/function_v2.tf)
 
     This module will create a simple cloud function with an http trigger via Terraform.
