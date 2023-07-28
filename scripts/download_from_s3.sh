@@ -12,6 +12,7 @@ This script is used to get all files between 2 timestamps from a specified bucke
   -s   All files would be last modified after this time. This must be in YYYY-MM-DDTHH:MM:SS format in UTC.
   -e   All files would be last modfied before this time. This must be in YYYY-MM-DDTHH:MM:SS format in UTC.
 EOF
+exit 1;
 }
 
 list_files() {
@@ -31,8 +32,20 @@ while getopts "b:p:s:e:" option; do
   case $option in
     p) PREFIX=${OPTARG};;
     b) BUCKET=${OPTARG};;
-    s) START=${OPTARG};;
-    e) END=${OPTARG};;
+    s) START=${OPTARG}
+    if [[ ! "$START" =~ ^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])T[0-9]{2}:[0-9]{2}:[0-9]{2} ]]
+    then
+      echo "Invalid start date provided."
+      usage
+    fi
+    ;;
+    e) END=${OPTARG}
+    if [[ ! "$END" =~ ^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])T[0-9]{2}:[0-9]{2}:[0-9]{2} ]]
+    then
+      echo "Invalid start date provided."
+      usage
+    fi
+    ;;
     *) # display help
        usage;;
   esac

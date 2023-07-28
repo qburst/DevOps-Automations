@@ -39,3 +39,8 @@ The EC2 Start/Stop Script is a Python script which can be used to automate the p
 [EC2 Volume and Snapshot Reporting Script](/scripts/unused_vol_and_orphan_snap_report/aws_utility_script.py)
 
 The EC2 Volume and Snapshot Reporting Script is a Python script that generates a report in CSV format, identifying unused volumes and orphan snapshots in your AWS EC2 environment. This script helps you identify and manage resources that are no longer associated with running instances, ensuring efficient resource allocation.
+
+## 9. Get logs from S3 based on time stamp
+[Download logs from S3 based on timestamp](scripts/download_from_s3.sh)
+
+This script is a bash script to quickly get all logs between 2 timestamps from S3. In the many cases where you need to download logs for debugging, it will help quickly get the logs to your local.
