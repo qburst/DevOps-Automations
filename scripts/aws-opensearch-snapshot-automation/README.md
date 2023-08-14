@@ -2,7 +2,7 @@
 
 A small project to take automated backup of aws opensearch cluster, this project can be used when the requirement is to
 migrate the opensearch cluster from one region to another or with further modification the project can be used for setting up
-a DR strategy (cross-region cluster replication) for any exsisting opensearch cluster.
+a DR strategy (cross-region cluster replication) for any existing opensearch cluster.
 
 ## Pre-requisites
 Name | Description
