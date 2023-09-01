@@ -7,12 +7,13 @@ variable "name" {
 variable "environment" {
   description = "Environment name"
   type        = string
+  default     = "dev"
 }
 
 variable "vpc_id" {
   description = "VPC id"
   type        = string
-  default     = null
+  default     = ""
 }
 
 variable "allowed_cidr" {
@@ -33,8 +34,8 @@ variable "redis_node_type" {
   default     = "cache.t3.micro"
 }
 
-variable "redis_clusters" {
-  description = "Number of Redis cache clusters (nodes) to create"
+variable "num_cache_clusters" {
+  description = "Number of Redis cache clusters (nodes) to create, Conflicts with num_node_groups."
   type        = string
   default     = "1"
 }
@@ -58,6 +59,7 @@ variable "availability_zones" {
 }
 
 variable "multi_az_enabled" {
+  description = "Specifies whether to enable Multi-AZ Support for the replication group"
   type    = bool
   default = false
 }
@@ -83,7 +85,7 @@ variable "transit_encryption_enabled" {
 variable "auth_token" {
   description = "The password used to access a password protected server. Can be specified only if transit_encryption_enabled = true. If specified must contain from 16 to 128 alphanumeric characters or symbols"
   type        = string
-  default     = null
+  default     = ""
 }
 
 # might need a map ( If the version is 6 or higher, the major and minor version can be set)
@@ -101,7 +103,7 @@ variable "redis_port" {
 variable "parameter_group_name" {
   description = "Name of the cache parameter group to associate"
   type        = string
-  default     = null
+  default     = ""
 }
 
 variable "parameter_group_family" {
@@ -155,4 +157,34 @@ variable "redis_snapshot_retention_limit" {
   description = "The number of days for which ElastiCache will retain automatic cache cluster snapshots before deleting them. For example, if you set SnapshotRetentionLimit to 5, then a snapshot that was taken today will be retained for 5 days before being deleted. If the value of SnapshotRetentionLimit is set to zero (0), backups are turned off. Please note that setting a snapshot_retention_limit is not supported on cache.t1.micro or cache.t2.* cache nodes"
   type        = number
   default     = 0
+}
+
+variable "num_node_groups" {
+  description = "Number of node groups (shards) for this Redis replication group. Changing this number will trigger a resizing operation before other settings modifications."
+  type        = number
+  default     = 0
+}
+
+variable "replicas_per_node_group" {
+  description = "Number of replica nodes in each node group. Changing this number will trigger a resizing operation before other settings modifications. Valid values are 0 to 5."
+  type        = number
+  default     = 0
+}
+
+variable "redis_num_cache_nodes" {
+  description = "Cluster size"
+  type        = number
+  default     = 1
+}
+
+variable "az_mode" {
+  description = "Enable or disable multiple AZs, eg: single-az or cross-az"
+  type        = string
+  default     = "single-az"
+}
+
+variable "availability_zone" {
+  description = "The Availability Zone of the cluster. az_mode must be set to single-az when used."
+  type        = string
+  default     = ""
 }

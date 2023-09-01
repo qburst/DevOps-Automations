@@ -13,7 +13,7 @@ variable "environment" {
 variable "vpc_id" {
   description = "VPC id"
   type        = string
-  default     = null
+  default     = ""
 }
 
 variable "allowed_cidr" {
@@ -55,7 +55,7 @@ variable "cluster_size" {
 variable "parameter_group_name" {
   description = "Name of the cache parameter group to associate"
   type        = string
-  default     = null
+  default     = ""
 }
 
 variable "parameter_group_family" {
@@ -67,7 +67,7 @@ variable "parameter_group_family" {
 variable "maintenance_window" {
   description = "Maintenance window"
   type        = string
-  default     = "null"
+  default     = ""
 }
 
 variable "apply_immediately" {

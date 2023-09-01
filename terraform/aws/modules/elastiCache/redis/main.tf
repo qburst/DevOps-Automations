@@ -3,7 +3,7 @@
 resource "aws_elasticache_replication_group" "redis" {
   replication_group_id          = "${var.environment}-${var.name}"
   description = "Terraform-managed ElastiCache replication group for ${var.environment}-${var.name}"
-  num_cache_clusters            = var.redis_clusters
+  num_cache_clusters            = var.num_cache_clusters
   node_type                     = var.redis_node_type
   automatic_failover_enabled    = var.redis_failover
   auto_minor_version_upgrade    = var.auto_minor_version_upgrade
@@ -27,6 +27,8 @@ resource "aws_elasticache_replication_group" "redis" {
   notification_topic_arn        = var.notification_topic_arn
   snapshot_window               = var.redis_snapshot_window
   snapshot_retention_limit      = var.redis_snapshot_retention_limit
+#   num_node_groups               = var.num_node_groups
+#   replicas_per_node_group       = var.replicas_per_node_group
 }
 
 # Create parameter group for redis cluster
@@ -75,3 +77,24 @@ resource "aws_security_group_rule" "redis_egress_world" {
     cidr_blocks       = ["0.0.0.0/0"]
     security_group_id = aws_security_group.redis_sg.id
 }
+
+
+# Create Redis cache single node cluster
+
+# resource "aws_elasticache_cluster" "redis_node" {
+#     cluster_id                     = "${var.environment}-${var.name}-node"
+#     engine                         = "redis"
+#     engine_version                 = var.redis_version
+#     node_type                      = var.redis_node_type
+#     num_cache_nodes                = var.redis_num_cache_nodes
+#     parameter_group_name           = aws_elasticache_parameter_group.redis_parameter_group.id
+#     subnet_group_name              = "${aws_elasticache_subnet_group.redis_subnet_group.id}"
+#     security_group_ids             = [aws_security_group.redis_sg.id]
+#     maintenance_window             = var.redis_maintenance_window
+#     apply_immediately              = var.apply_immediately
+#     notification_topic_arn         = var.notification_topic_arn
+#     port                           = var.redis_port
+#     az_mode                        = var.az_mode
+#     availability_zone              = var.availability_zone
+#     preferred_availability_zones   = var.availability_zones
+# }

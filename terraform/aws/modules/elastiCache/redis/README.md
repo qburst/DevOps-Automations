@@ -20,7 +20,7 @@ Any with :x: can be ignored, but can be configurd if we want.
 | allowed_cidr| The CIDR blocks allowed in Security group | :heavy_check_mark: | list(string) | |
 | subnet_ids | A list of VPC subnet IDs to create the subnet group | :heavy_check_mark: | list(string) | |
 | redis_node_type | Instance type to use for creating the Redis cache clusters | :heavy_check_mark: | string | "cache.t3.micro" |
-| redis_clusters | Number of Redis cache clusters (nodes) to create | :heavy_check_mark: | string | "1" |
+| num_cache_clusters | Number of Redis cache clusters (nodes) to create | :heavy_check_mark: | string | "1" |
 | redis_failover | Specifies whether a read-only replica will be automatically promoted to read/write primary if the existing primary fails | :x: | bool | false |
 | auto_minor_version_upgrade | Specifies whether a minor engine upgrades will be applied automatically to the underlying Cache Cluster instances during the maintenance window | :x: | bool | true |
 | parameter_group_name | Name of the existing parameter group | :heavy_check_mark: | string | |
@@ -41,7 +41,38 @@ Any with :x: can be ignored, but can be configurd if we want.
 | snapshot_name | The name of a snapshot from which to restore data into the new node group. Changing the snapshot_name forces a new resource | :x: | string | |
 | redis_snapshot_window | The daily time range (in UTC) during which ElastiCache will begin taking a daily snapshot of your cache cluster. The minimum snapshot window is a 60 minute period | :x: | string | "06:30-07:30" |
 | redis_snapshot_retention_limit | The number of days for which ElastiCache will retain automatic cache cluster snapshots before deleting them. For example, if you set SnapshotRetentionLimit to 5, then a snapshot that was taken today will be retained for 5 days before being deleted. If the value of SnapshotRetentionLimit is set to zero (0), backups are turned off. Please note that setting a snapshot_retention_limit is not supported on cache.t1.micro or cache.t2.* cache nodes | :x: | number | 0 |
+| num_node_groups | Number of node groups (shards) for this Redis replication group. Changing this number will trigger a resizing operation before other settings modifications. | :x: | number | 0 |
+| replicas_per_node_group | Number of replica nodes in each node group. Changing this number will trigger a resizing operation before other settings modifications. Valid values are 0 to 5. | :x: | number | 0 |
+| availability_zone | The Availability Zone of the cluster. az_mode must be set to single-az when used | :x: | string | |
+| az_mode | Enable or disable multiple AZs, eg: single-az or cross-az | :x: | string | "single-az" |
+| redis_num_cache_nodes | Number of Redis cluster nodes | :x: | number | 1 |
 
 ## Caveats
 
 1. We assume that the VPC and subnets are created already.
+2. In this module, Redis cluster is created in Cluster Mode "Disabled". This use the following argument:
+
+```
+num_cache_clusters            = 2
+```
+
+To create the Redis cluster in Cluster Mode "Enabled", following argument is used instead of "num_cache_clusters":
+```
+num_node_groups               = 2
+replicas_per_node_group       = 1
+```
+
+3. To create single node Redis cluster, use the aws_elasticache_cluster resource named "redis_node".
+
+## Example
+
+Following is the varaible values supplied to the module along with the default values for remaining variables: 
+```
+vpc_id               = "vpc-0441fce0c2492c186"
+allowed_cidr         = ["10.51.0.0/16"]
+subnet_ids           = ["subnet-010042383f971ee48", "subnet-08cc74de2a32f6f50", "subnet-0d603c3ee329c1005"]
+redis_version        = "3.2.10"
+num_cache_clusters   = 1
+redis_node_type      = "cache.t3.micro"
+parameter_group_name = "demo-redis-pg"
+```

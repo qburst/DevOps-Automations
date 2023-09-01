@@ -33,18 +33,24 @@ Any with :x: can be ignored, but can be configurd if we want.
 | availability_zone | The Availability Zone of the cluster. az_mode must be set to single-az when used. | :x: | string | |
 | availability_zones | List of Availability Zones for the cluster. az_mode must be set to cross-az when used | :x: | list(string) | |
 
+
 ## Caveats
-1. This module can also be used to make a **single-node Redis instance**, the following argument values will differ. Example:
+1. We assume that the VPC and subnets are created already.
+
+## Example
+
+Following is the varaible values supplied to the module along with the default values for remaining variables:
+
+**Memcached Cluster**
 ```
-resource "aws_elasticache_cluster" "redis_node" {
-  cluster_id           = "dev-redis-node"
-  engine               = "redis"
-  node_type            = "cache.m4.large"
-  num_cache_nodes      = 1
-  parameter_group_name = "default.redis3.2"
-  engine_version       = "3.2.10"
-  port                 = 6379
-}
+vpc_id                 = "vpc-0441fce0c2492c186"
+allowed_cidr           = ["10.51.0.0/16"]
+subnet_ids             = ["subnet-010042383f971ee48", "subnet-08cc74de2a32f6f50", "subnet-0d603c3ee329c1005"]
+engine_version         = "1.6.17"
+instance_type          = "cache.t2.micro"
+engine                 = "memcached"
+port                   = 11211
+parameter_group_name   = "demo-memcached-pg"
+parameter_group_family = "memcached1.6"
+
 ```
-2. We need to change the parameter_group_family variable accordingly while creating the parameter group for single-redis node.
-3. We assume that the VPC and subnets are created already.
