@@ -28,7 +28,7 @@ Any with :x: can be ignored, but can be configurd if we want.
 | redis_maintenance_window | Specifies the weekly time range for when maintenance on the cache cluster is performed. The format is ddd:hh24:mi-ddd:hh24:mi (24H Clock UTC). The minimum maintenance window is a 60 minute period | :x: | "fri:08:00-fri:09:00" | |
 | apply_immediately | Specifies whether any modifications are applied immediately, or during the next maintenance window. Default is false. | :x: | bool | false |
 | notification_topic_arn | An Amazon Resource Name (ARN) of an SNS topic to send ElastiCache notifications to. Example: arn:aws:sns:us-east-1:xxxxxxxxxx:my_sns_topic | :x: | string | |
-| redis_port | Redis port | :x: | number | 6379 |
+| redis_port | Redis port | :heavy_check_mark: | number | 6379 |
 | at_rest_encryption_enabled | Whether to enable encryption at rest | :x: | bool | false |
 | kms_key_id | The ARN of the key that you wish to use if encrypting at rest. If not supplied, uses service managed encryption. Can be specified only if at_rest_encryption_enabled = true | :x: | string | |
 | transit_encryption_enabled | Whether to enable encryption in transit. Requires 3.2.6 or >=4.0 redis_version | :x: | bool | false |
