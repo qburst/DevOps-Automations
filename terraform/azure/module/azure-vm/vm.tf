@@ -12,7 +12,7 @@ resource "azurerm_virtual_network" "vn-vm" {
 }
 
 resource "azurerm_subnet" "subnet" {
-  name                 = "internal"
+  name                 = var.subnet_name
   resource_group_name  = var.resource_group_name
   virtual_network_name = var.virtual_network_name
   address_prefixes     = ["10.0.2.0/24"]
@@ -45,10 +45,10 @@ resource "azurerm_virtual_machine" "vm-sample" {
   }
 
   storage_image_reference {
-    publisher = "Canonical"
-    offer     = "UbuntuServer"
-    sku       = "18.04-LTS"
-    version   = "latest"
+    publisher = var.publisher
+    offer     = var.offer
+    sku       = var.sku
+    version   = var.version
   }
 }
 
