@@ -44,3 +44,8 @@ The EC2 Volume and Snapshot Reporting Script is a Python script that generates a
 [Snapshot script](/scripts/aws-opensearch-snapshot-automation/snapshot.py)
 
 The Opensearch snapshot script is a python script which can be used to automate the process of taking snapshots into a custom repository.
+
+## 10. Domain Expiry Check Script
+[Domain Expiry Check Script](/scripts/domain-expiry-check/domain_expiry_checker.sh)
+
+A bash script to monitor the expiration dates of domain names. It fetches domain information using WHOIS queries and send email alerts when domains are about to expire.
