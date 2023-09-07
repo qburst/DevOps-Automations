@@ -15,5 +15,5 @@ provider "aws" {
 variable "region" {
   type        = string
   description = "The default region to use"
-  default     = "ap-south-1"
+  default     = "us-east-2"
 }

@@ -14,9 +14,13 @@ output "port" {
   value = var.redis_port
 }
 
+# To get primary endpoint for  Redis cache replication group cluster
+
 output "primary_endpoint" {
   value = aws_elasticache_replication_group.redis.primary_endpoint_address
 }
+
+# To get reader endpoint for  Redis cache replication group cluster
 
 output "reader_endpoint_address" {
   value       = join("", compact(aws_elasticache_replication_group.redis[*].reader_endpoint_address))
