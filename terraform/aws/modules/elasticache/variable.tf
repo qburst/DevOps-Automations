@@ -17,7 +17,7 @@ variable "vpc_id" {
 }
 
 variable "allowed_cidr" {
-  description = "The CIDR block for the VPC"
+  description = "The CIDR blocks allowed in Security group"
   type        = list(string)
   default     = []
 }
@@ -28,16 +28,82 @@ variable "subnet_ids" {
   default     = []
 }
 
-variable "redis_node_type" {
-  description = "Instance type to use for creating the Redis cache clusters"
+variable "engine" {
+  description = "Elastic cache engine"
   type        = string
-  default     = "cache.t3.micro"
+  default     = "memcached"
 }
 
-variable "num_cache_clusters" {
-  description = "Number of Redis cache clusters (nodes) to create, Conflicts with num_node_groups."
+variable "engine_version" {
+  description = "Cache engine version. For more info, see https://docs.aws.amazon.com/AmazonElastiCache/latest/mem-ug/supported-engine-versions.html"
   type        = string
-  default     = "1"
+  default     = "1.6.17"
+}
+
+variable "instance_type" {
+  description = "Elastic cache instance type"
+  type        = string
+  default     = "cache.t2.micro"
+}
+
+variable "cluster_size" {
+  description = "Cluster size"
+  type        = number
+  default     = 1
+}
+
+variable "parameter_group_name" {
+  description = "Name of the cache parameter group to associate"
+  type        = string
+  default     = ""
+}
+
+variable "parameter_group_family" {
+  description = "Name of the cache parameter group family"
+  type        = string
+  default     = "memcached1.6"
+}
+
+variable "maintenance_window" {
+  description = "Maintenance window"
+  type        = string
+  default     = ""
+}
+
+variable "notification_topic_arn" {
+  description = "An Amazon Resource Name (ARN) of an SNS topic to send ElastiCache notifications to. Example: arn:aws:sns:us-east-1:xxxxxxxxxx:my_sns_topic"
+  type        = string
+  default     = ""
+}
+
+variable "port" {
+  description = "Cache port"
+  type        = number
+  default     = 11211
+}
+
+variable "az_mode" {
+  description = "Enable or disable multiple AZs, eg: single-az or cross-az"
+  type        = string
+  default     = "single-az"
+}
+
+variable "availability_zone" {
+  description = "The Availability Zone of the cluster. az_mode must be set to single-az when used."
+  type        = string
+  default     = ""
+}
+
+variable "availability_zones" {
+  description = "List of Availability Zones for the cluster. az_mode must be set to cross-az when used."
+  type        = list(string)
+  default     = []
+}
+
+variable "replication_group_enabled" {
+  description = "replication group status for redis"
+  type        = string
+  default     = "disabled"
 }
 
 variable "redis_failover" {
@@ -50,12 +116,6 @@ variable "auto_minor_version_upgrade" {
   description = "Specifies whether a minor engine upgrades will be applied automatically to the underlying Cache Cluster instances during the maintenance window"
   type        = bool
   default     = true
-}
-
-variable "availability_zones" {
-  description = "A list of EC2 availability zones in which the replication group's cache clusters will be created. The order of the availability zones in the list is not important"
-  type        = list(string)
-  default     = []
 }
 
 variable "multi_az_enabled" {
@@ -95,22 +155,6 @@ variable "redis_version" {
   default     = "3.2.10"
 }
 
-variable "redis_port" {
-  type    = number
-  default = 6379
-}
-
-variable "parameter_group_name" {
-  description = "Name of the cache parameter group to associate"
-  type        = string
-  default     = ""
-}
-
-variable "parameter_group_family" {
-  type = string
-  default = "redis3.2"
-}
-
 variable "security_group_names" {
   description = "A list of cache security group names to associate with this replication group"
   type        = list(string)
@@ -133,18 +177,6 @@ variable "apply_immediately" {
   description = "Specifies whether any modifications are applied immediately, or during the next maintenance window. Default is false."
   type        = bool
   default     = false
-}
-
-variable "redis_maintenance_window" {
-  description = "Specifies the weekly time range for when maintenance on the cache cluster is performed. The format is ddd:hh24:mi-ddd:hh24:mi (24H Clock UTC). The minimum maintenance window is a 60 minute period"
-  type        = string
-  default     = "fri:08:00-fri:09:00"
-}
-
-variable "notification_topic_arn" {
-  description = "An Amazon Resource Name (ARN) of an SNS topic to send ElastiCache notifications to. Example: arn:aws:sns:us-east-1:012345678999:my_sns_topic"
-  type        = string
-  default     = ""
 }
 
 variable "redis_snapshot_window" {
@@ -171,20 +203,3 @@ variable "replicas_per_node_group" {
   default     = 0
 }
 
-variable "redis_num_cache_nodes" {
-  description = "Cluster size"
-  type        = number
-  default     = 1
-}
-
-variable "az_mode" {
-  description = "Enable or disable multiple AZs, eg: single-az or cross-az"
-  type        = string
-  default     = "single-az"
-}
-
-variable "availability_zone" {
-  description = "The Availability Zone of the cluster. az_mode must be set to single-az when used."
-  type        = string
-  default     = ""
-}
