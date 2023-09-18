@@ -1,6 +1,7 @@
 # Create memcached cache cluster
 
 resource "aws_elasticache_cluster" "memcached" {
+    count                          = var.engine == "memcached" ? 1 : 0
     cluster_id                     = "${var.environment}-${var.name}"
     engine                         = var.engine
     engine_version                 = var.engine_version
@@ -16,12 +17,12 @@ resource "aws_elasticache_cluster" "memcached" {
     az_mode                        = var.az_mode
     availability_zone              = var.availability_zone
     preferred_availability_zones   = var.availability_zones
-    count                          = var.engine == "memcached" ? 1 : 0
 }
 
 # Create Redis cache single node cluster
 
 resource "aws_elasticache_cluster" "redis_node" {
+    count                          = var.engine == "redis" && var.replication_group_enabled == "disabled" ? 1 : 0
     cluster_id                     = "${var.environment}-${var.name}-node"
     engine                         = var.engine
     engine_version                 = var.redis_version
@@ -37,12 +38,12 @@ resource "aws_elasticache_cluster" "redis_node" {
     az_mode                        = var.az_mode
     availability_zone              = var.availability_zone
     preferred_availability_zones   = var.availability_zones
-    count                          = var.engine == "redis" && var.replication_group_enabled == "disabled" ? 1 : 0
 }
 
 # Create Redis cache cluster
 
 resource "aws_elasticache_replication_group" "redis" {
+  count                         = var.engine == "redis" && var.replication_group_enabled == "enabled" ? 1 : 0
   replication_group_id          = "${var.environment}-${var.name}"
   description                   = "Terraform-managed ElastiCache replication group for ${var.environment}-${var.name}"
   num_cache_clusters            = var.cluster_size
@@ -69,9 +70,6 @@ resource "aws_elasticache_replication_group" "redis" {
   notification_topic_arn        = var.notification_topic_arn
   snapshot_window               = var.redis_snapshot_window
   snapshot_retention_limit      = var.redis_snapshot_retention_limit
-  count                         = var.engine == "redis" && var.replication_group_enabled == "enabled" ? 1 : 0
-#   num_node_groups               = var.num_node_groups
-#   replicas_per_node_group       = var.replicas_per_node_group
 }
 
 
