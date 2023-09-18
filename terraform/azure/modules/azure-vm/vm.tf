@@ -19,14 +19,15 @@ resource "azurerm_subnet" "subnet" {
 }
 
 resource "azurerm_network_interface" "nic" {
-  name                = "sample-nic"
+  name                = var.azurerm_network_interface_name
   location            = var.location
   resource_group_name = var.resource_group_name
 
   ip_configuration {
-    name                          = "internal"
+    name                          = var.ip_configuration
     subnet_id                     = azurerm_subnet.subnet.id
-    private_ip_address_allocation = "Dynamic"
+    private_ip_address_allocation = var.private_ip_address_allocation
+    public_ip_address_id = azurerm_public_ip.public_ip.id
   }
 }
 
@@ -35,14 +36,9 @@ resource "azurerm_virtual_machine" "vm-sample" {
   resource_group_name = var.resource_group_name
   location            = var.location
   size                = var.vm_size
-  admin_username      = var.admin_username
-  admin_password      = var.admin_password
   network_interface_ids = [azurerm_network_interface.nic.id]
+  depends_on = [ azurerm_public_ip.public_ip ]
 
-  os_disk {
-    caching              = "ReadWrite"
-    storage_account_type = "Standard_LRS"
-  }
 
   storage_image_reference {
     publisher = var.publisher
@@ -50,6 +46,28 @@ resource "azurerm_virtual_machine" "vm-sample" {
     sku       = var.sku
     version   = var.version
   }
+
+  storage_os_disk {
+    name              = var.storage_os_disk_name
+    caching           = var.caching
+    create_option     = var.create_option
+    managed_disk_type = var.managed_disk_type
+  }
+
+  os_profile {
+    computer_name  = var.computer_name
+    admin_username = var.admin_username
+    admin_password = var.admin_password
+  }
+
+}
+
+resource "azurerm_public_ip" "public_ip" {
+  name                = var.public_ip_name
+  location            = var.location
+  resource_group_name = var.resource_group_name
+  allocation_method   = var.allocation_method
+
 }
 
 

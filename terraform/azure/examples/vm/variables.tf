@@ -69,6 +69,56 @@ variable "admin_password" {
   default = "Password@123"
 }
 
+variable "allocation_method" {
+  description = "Allocation method of a public ip"
+  default = "Static"
+}
+
+variable "public_ip_name" {
+  description = "Name of public ip"
+  default = "publicIP-name"
+}
+
+variable "computer_name" {
+  description = "Computer name of Os profile"
+  default = "hostname"
+}
+
+variable "private_ip_address_allocation" {
+  description = "Type of allocation"
+  default = "Static"
+}
+
+variable "azurerm_network_interface_name" {
+  description = "Name of NIC"
+  default = "nic_name"
+}
+
+variable "ip_configuration" {
+  description = "Name of the ip_configuration"
+  default = "internal"
+}
+
+variable "managed_disk_type" {
+  description = "Managed disk type storage os disk"
+  default = "Standard_LRS"
+}
+
+variable "create_option" {
+  description = "Create option type storage os disk"
+  default = "FromImage"
+}
+
+variable "caching" {
+  description = "Caching for storage os disk"
+  default = "ReadWrite"
+}
+
+variable "storage_os_disk_name" {
+  description = "Name of the storage os disk"
+  default = "myosdisk1"
+}
+
 variable "tags" {
   description = "Tags for the VM"
   default = "development"
