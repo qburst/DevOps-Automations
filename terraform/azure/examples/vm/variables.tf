@@ -55,7 +55,7 @@ variable "virtual_network_name" {
 variable "vm_size" {
   description = "Size of the virtual machine"
   type = string
-  default = "vm-size-name"
+  default = "Standard_DS1_v2"
 }
 
 variable "admin_username" {
@@ -104,14 +104,35 @@ variable "managed_disk_type" {
   default = "Standard_LRS"
 }
 
+variable "managed_disk_name" {
+  description = "Managed disk name storage os disk"
+  default = "disk-name"
+}
+
 variable "create_option" {
   description = "Create option type storage os disk"
   default = "FromImage"
 }
 
+variable "create_option_disk" {
+  description = "Create option disk type storage os disk"
+  default = "Empty"
+}
+
+variable "disk_size_gb" {
+  description = "Size of a Extra Disk"
+  default = "10"
+}
+
 variable "caching" {
   description = "Caching for storage os disk"
   default = "ReadWrite"
+}
+
+variable "lun" {
+  description = "Logic unit numbers for shared storage"
+  type = number
+  default = 2
 }
 
 variable "storage_os_disk_name" {

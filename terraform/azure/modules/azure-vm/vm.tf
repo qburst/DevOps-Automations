@@ -35,7 +35,7 @@ resource "azurerm_virtual_machine" "vm-sample" {
   name                = var.vm_name
   resource_group_name = var.resource_group_name
   location            = var.location
-  size                = var.vm_size
+  vm_size                = var.vm_size
   network_interface_ids = [azurerm_network_interface.nic.id]
   depends_on = [ azurerm_public_ip.public_ip ]
 
@@ -70,4 +70,19 @@ resource "azurerm_public_ip" "public_ip" {
 
 }
 
+resource "azurerm_managed_disk" "data_disk" {
+  name                 = var.managed_disk_name
+  location            = var.location
+  resource_group_name = var.resource_group_name
+  storage_account_type = var.managed_disk_type
+  create_option        = var.create_option_disk
+  disk_size_gb         = var.disk_size_gb 
+}
 
+
+resource "azurerm_virtual_machine_data_disk_attachment" "vm-data-disk-attach" {
+  managed_disk_id    = azurerm_managed_disk.data_disk.id
+  virtual_machine_id = azurerm_virtual_machine.vm-sample.id
+  lun                = var.lun
+  caching            = var.caching
+}
