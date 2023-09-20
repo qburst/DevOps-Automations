@@ -11,4 +11,8 @@ module "my_lambda" {
   }
   timeout           = 60
   memory_size       = 256
+   policy_arns = [
+    "arn:aws:iam::aws:policy/AmazonEC2FullAccess",
+    "arn:aws:iam::691936972587:policy/service-role/AWSLambdaBasicExecutionRole-a61b5924-9719-48a9-8b48-d5a12a46fa1e"
+  ]
 }
