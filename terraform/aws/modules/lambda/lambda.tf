@@ -31,7 +31,15 @@ resource "aws_iam_role" "lambda_execution_role" {
       }
     ]
   })
+
   tags = {
     Name = "${var.name_prefix}-lambda-role"
   }
+}
+ # Attach IAM policies dynamically
+resource "aws_iam_policy_attachment" "lambda_policy_attachment" {
+  count      = length(var.policy_arns)
+  name       = "lambda-policy-attachment-${count.index}"  # Unique name for each attachment
+  policy_arn = var.policy_arns[count.index]
+  roles      = [aws_iam_role.lambda_execution_role.name]
 }

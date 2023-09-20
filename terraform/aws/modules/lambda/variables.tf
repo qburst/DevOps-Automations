@@ -25,6 +25,12 @@ variable "timeout" {
   default     = 60
 }
 
+variable "policy_arns" {
+  description = "List of IAM policy ARNs to attach to the Lambda execution role"
+  type        = list(string)
+  default     = []
+}
+
 variable "memory_size" {
   description = "The amount of memory in MB allocated to the Lambda function"
   default     = 128
