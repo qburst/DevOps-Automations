@@ -1,6 +1,6 @@
 module "elasticache" {
 	source				  = "../../modules/elasticache"
-	Name				  = "qburst"
+	name				  = "qburst"
 	environment			  = "test"
 	vpc_id				  = "vpc-0aaada0de503478d5"
 	allowed_cidr     		  = ["10.51.0.0/16"]
