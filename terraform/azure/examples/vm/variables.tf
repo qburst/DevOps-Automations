@@ -1,102 +1,102 @@
-variable "vm_name" {
-  description = "Name of the virtual machine"
-  type        = string
-  default     = "sample-vm"
-}
 
 variable "location" {
-  description = "Azure region"
-  type        = string
-  default     = "South India"
+  description = "Location"
+  default     = "Central India"
 }
 
 variable "resource_group_name" {
-  description = "Name of the Azure resource group"
-  type        = string
-  default     = "rg-name"
+  description = "Resource name"
+  default     = "john-qb-rg"
+}
+
+variable "virtual_network_name" {
+  description = "Name of the Virtual network"
+  default     = "john-qb-vn"
+}
+
+variable "network_interface_name" {
+  description = "Name of the Network Interface"
+  default     = "john-qb-nic"
+}
+
+variable "subnet_name" {
+  description = "Name of the subnet"
+  default     = "john-qb-subnet"
+}
+
+variable "vm_name" {
+  description = "Name of the VM"
+  default     = "john-qb-vm"
+}
+
+variable "ip_config" {
+  description = "Name of the Ip config"
+  default     = "testconfiguration1"
+}
+
+variable "vm_size" {
+  description = "Size of a vm"
+  default     = "Standard_DS1_v2"
+}
+
+variable "public_ip" {
+  description = "Public ip"
+  default     = "john-qb-pub-ip"
 }
 
 variable "publisher" {
-  description = "Name of the publisher OS"
-  type        = string
+  description = "Publisher of the image"
   default     = "Canonical"
 }
 
 variable "offer" {
-  description = "Name of the offer OS"
-  type        = string
-  default     = "UbuntuServer"
+  description = "Image variant"
+  default     = "0001-com-ubuntu-server-focal"
 }
 
 variable "sku" {
-  description = "Name of the sku OS"
-  type        = string
-  default     = "20.04-LTS"
+  description = "Image sku"
+  default     = "20_04-lts"
 }
 
-variable "version" {
-  description = "Name of the OS version"
-  type        = string
+variable "image_version" {
+  description = "Image version"
   default     = "latest"
 }
 
-variable "subnet_name" {
-  description = "Name of the Subnet Name"
-  type        = string
-  default     = "internal"
+variable "os_disk_name" {
+  description = "name of the os"
+  default     = "myosdisk1"
 }
 
-variable "virtual_network_name" {
-  description = "Name of the Virtual Network"
-  type        = string
-  default     = "vnet-name"
-}
-
-variable "vm_size" {
-  description = "Size of the virtual machine"
-  type        = string
-  default     = "Standard_DS1_v2"
-}
-
-variable "admin_username" {
-  description = "Admin username for the VM"
-  type        = string
-  default     = "adminuser"
-}
-
-variable "admin_password" {
-  description = "Admin password for the VM"
-  default     = "Password@123"
-}
-
-variable "allocation_method" {
-  description = "Allocation method of a public ip"
-  default     = "Static"
-}
-
-variable "public_ip_name" {
-  description = "Name of public ip"
-  default     = "publicIP-name"
+variable "create_option" {
+  description = "Image create option"
+  default     = "FromImage"
 }
 
 variable "computer_name" {
-  description = "Computer name of Os profile"
+  description = "Name of the computer"
   default     = "hostname"
 }
 
-variable "private_ip_address_allocation" {
-  description = "Type of allocation"
+variable "admin_username" {
+  description = "Username"
+  default     = "testadmin"
+}
+
+variable "admin_password" {
+  description = "Password"
+  default     = "Password1234!"
+}
+
+variable "address_allocation" {
+  description = "public ip allocation method"
+  default     = "Dynamic"
+}
+
+variable "allocation_method" {
+  description = "public ip allocation method"
   default     = "Static"
-}
-
-variable "azurerm_network_interface_name" {
-  description = "Name of NIC"
-  default     = "nic_name"
-}
-
-variable "ip_configuration" {
-  description = "Name of the ip_configuration"
-  default     = "internal"
 }
 
 variable "managed_disk_type" {
@@ -104,14 +104,9 @@ variable "managed_disk_type" {
   default     = "Standard_LRS"
 }
 
-variable "managed_disk_name" {
+variable "managed_disk" {
   description = "Managed disk name storage os disk"
   default     = "disk-name"
-}
-
-variable "create_option" {
-  description = "Create option type storage os disk"
-  default     = "FromImage"
 }
 
 variable "create_option_disk" {
@@ -121,12 +116,7 @@ variable "create_option_disk" {
 
 variable "disk_size_gb" {
   description = "Size of a Extra Disk"
-  default     = "10"
-}
-
-variable "caching" {
-  description = "Caching for storage os disk"
-  default     = "ReadWrite"
+  default     = "1024"
 }
 
 variable "lun" {
@@ -135,12 +125,10 @@ variable "lun" {
   default     = 2
 }
 
-variable "storage_os_disk_name" {
-  description = "Name of the storage os disk"
-  default     = "myosdisk1"
+variable "caching_disk" {
+  default = "ReadWrite"
 }
 
-variable "tags" {
-  description = "Tags for the VM"
-  default     = "development"
+variable "environment" {
+  default = "dev"
 }
