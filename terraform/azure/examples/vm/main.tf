@@ -2,7 +2,7 @@
 
 module "az-vm" {
 
-  source                 = "./modules/az-vm"
+  source                 = "../../modules/az-vm/"
   resource_group_name    = var.resource_group_name
   location               = var.location
   subnet_name            = var.subnet_name
