@@ -12,11 +12,11 @@ This module will create a simple compute engine. As a part of the module it will
 
 | Name        | Description | Required | Type | Default |
 | ----------- | ----------- | -------- | ---- | ------- |
-| name | The name of the compute engine being created | :heavy_check_mark: | string | |
-| machine_type | The machine type required | :heavy_check_mark:| string | "" |
+| name | The name of the compute engine being created | :heavy_check_mark: | string | "" |
+| machine_type | The machine type required | :heavy_check_mark:| string | "e2-medium" |
 | zone | The zone where the engine will be created | :heavy_check_mark: | string | If it is not provided, the provider zone is used.|
-| image | Image to be used for the engine | :heavy_check_mark: | string | |
-| network | VPC where compute engine needs to be created | :heavy_check_mark:| string | |
+| image | Image to be used for the engine | :heavy_check_mark: | string | "ubuntu-os-cloud/ubuntu-2004-lts" |
+| network | VPC where compute engine needs to be created | :heavy_check_mark:| string | "" |
 
 
 

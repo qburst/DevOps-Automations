@@ -15,10 +15,10 @@ resource "google_compute_instance" "compute_engine" {
   }
   network_interface {
     network = var.network
-   
+
   }
-service_account {
-    email  = google_service_account.computeengine_sa.email
+  service_account {
+    email = google_service_account.computeengine_sa.email
     #The scope can be changed based on requirement.By using cloud-platform,it has full access to all APIs.In ideal case, restrict the scope
     scopes = ["cloud-platform"]
   }
