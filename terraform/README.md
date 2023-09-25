@@ -26,3 +26,8 @@ This are various examples build using the above modules.
 [Cloud Function v2 - GCP](/terraform/gcp/modules/cloud_function_v2/function_v2.tf)
 
     This module will create a simple cloud function with an http trigger via Terraform.
+
+### 5. Compute Engine - GCP
+[Compute Engine -GCP](/terraform/gcp/modules/compute_engine/compute_engine.tf)
+
+    This module will create a VM instance with the image chosen by the user (defaults to Ubuntu 22.04)
