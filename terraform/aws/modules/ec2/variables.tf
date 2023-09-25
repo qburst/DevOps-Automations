@@ -37,7 +37,7 @@ variable "iam-role-name" {
 
 # EIP
 variable "alloc_id" {
-  default = ""
+  default = "eipalloc-0b2333a222698de3d"
 }
 
 # SG
@@ -95,9 +95,16 @@ variable "disk-tag-name" {
 }
 
 variable "ec2_additional_ebs_volume_count" {
-  default = 2
+  description = "secondary volume"
+  default = 1 # only 0 or 1 supported
 }
 
 variable "ec2_additional_ebs_volume_size" {
   default = 2
+}
+
+variable "role_arn" {
+  description = "Role arn to attach"
+  type        = string
+  default     = "arn:aws:iam::375934664445:role/test-terraform"
 }
