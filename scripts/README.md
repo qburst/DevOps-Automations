@@ -44,3 +44,8 @@ The EC2 Volume and Snapshot Reporting Script is a Python script that generates a
 [Snapshot script](/scripts/aws-opensearch-snapshot-automation/snapshot.py)
 
 The Opensearch snapshot script is a python script which can be used to automate the process of taking snapshots into a custom repository.
+
+## 10. Get logs from S3 based on time stamp
+[Download logs from S3 based on timestamp](scripts/download_logs_from_s3.sh)
+
+This script is a bash script to quickly get all logs between 2 timestamps from S3. In the many cases where you need to download logs for debugging, it will help quickly get the logs to your local.

@@ -1,22 +1,22 @@
 
 variable "name" {
-  type = string
+  type    = string
   default = ""
 }
 variable "machine_type" {
-  type = string
+  type    = string
   default = "e2-medium"
 }
 variable "zone" {
-  type = string
+  type    = string
   default = "us-central1-a"
 }
 variable "image" {
-  type = string
+  type    = string
   default = "ubuntu-os-cloud/ubuntu-2204-lts"
 }
 variable "network" {
-  type = string
-  default=""
+  type    = string
+  default = ""
 
 }

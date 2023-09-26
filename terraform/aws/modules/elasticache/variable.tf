@@ -108,8 +108,8 @@ variable "replication_group_enabled" {
 
 variable "redis_failover" {
   description = "Specifies whether a read-only replica will be automatically promoted to read/write primary if the existing primary fails"
-  type    = bool
-  default = false
+  type        = bool
+  default     = false
 }
 
 variable "auto_minor_version_upgrade" {
@@ -120,8 +120,8 @@ variable "auto_minor_version_upgrade" {
 
 variable "multi_az_enabled" {
   description = "Specifies whether to enable Multi-AZ Support for the replication group"
-  type    = bool
-  default = false
+  type        = bool
+  default     = false
 }
 
 variable "at_rest_encryption_enabled" {
