@@ -28,12 +28,8 @@ resource "azurerm_subnet" "subnets" {
   name                 = var.subnet_names[count.index]
   resource_group_name  = azurerm_resource_group.resourcegroup.name
   virtual_network_name = azurerm_virtual_network.Vnet.name
-  address_prefixes     = var.subnet_address_prefixes[count.index]
-  tags = {
-    Name        = var.subnet_names[count.index]
-    Environment = "${local.environment}"
+  address_prefixes     = [var.subnet_address_prefixes[count.index]]
   }
-}
 
 #To create network security group
 resource "azurerm_network_security_group" "default_nsg" {
@@ -83,7 +79,8 @@ resource "azurerm_network_security_rule" "outbound" {
 
 #To create network security group association
 resource "azurerm_subnet_network_security_group_association" "nsg_association" {
-  subnet_id                 = azurerm_subnet.subnets[*].id
+  count                     = length(azurerm_subnet.subnets)
+  subnet_id                 = azurerm_subnet.subnets[count.index].id
   network_security_group_id = azurerm_network_security_group.default_nsg.id
 }
 

@@ -14,5 +14,5 @@ provider "azurerm" {
   client_secret   = " "
   tenant_id       = " "
   subscription_id = " "
-
+  skip_provider_registration = true
 }
