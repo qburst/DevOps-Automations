@@ -17,14 +17,14 @@ A bash script to monitor the expiration dates of domain names. It fetches domain
 ## Prerequisites
 - Bash shell
 - Ensure the packages ssmtp, mailutils, and mutt are installed on your system.
-- Update SMTP server information in the ssmtp configuration file `/etc/ssmtp/ssmtp.conf` , refer the wiki https://wiki.archlinux.org/title/SSMTP 
+- Update SMTP server information in the ssmtp configuration file `/etc/ssmtp/ssmtp.conf` , refer the wiki https://wiki.archlinux.org/title/SSMTP
 
 ## Usage
 
 1. Clone this repository.
 2. Navigate to project's directory.
-3. Edit the `domain_list.txt` file to include the domains you want to monitor, one per line.
-4. Modify the variables `username`, `days_threshold`, and `email_address` in the script `domain_expiry_checker.sh` to configure the user who running the script, threshold days, and email address to receive alert respectively.
+3. Update the domain list file path in the `domain_list` variable which should contain domains you want to monitor line by line.
+4. Modify the variables `days_threshold` and `email_address` in the script `domain_expiry_checker.sh` to configure the threshold days and email address to receive alert respectively.
 5. Run the script as a cronjob, you can add the following to your crontab file using `crontab -e` command to schedule the script to run daily at 4:00 AM. Replace the path of log file according to yours.
    ```
    0 3 * * * /bin/bash /path/to/domain_expiry_checker.sh >> /path/to/logfile.log 2>&1
@@ -35,7 +35,7 @@ A bash script to monitor the expiration dates of domain names. It fetches domain
 - Tested on Ubuntu 20.04.6 LTS (Focal Fossa)
 
 ```
-$ bash ./domain_expiry_checker.sh 
+$ bash ./domain_expiry_checker.sh
 +--------------------------------+------------------+--------------------+
 |          Domain Name           |   Expiry Date    |      Status        |
 +--------------------------------+------------------+--------------------+

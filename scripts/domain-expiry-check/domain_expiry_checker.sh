@@ -1,13 +1,7 @@
 #!/bin/bash
 
-# Specify the username
-username=""
-
-# Path to user's home directory
-home_directory="/home/$username"
-
 # Path to list of domains file
-domain_list="$home_directory/OpenSource-DevOps/DevOps-Automations/scripts/domain-expiry-check/domain_list.txt"
+domain_list="full path of domain list file"
 
 # Set the threshold value
 days_threshold=60
