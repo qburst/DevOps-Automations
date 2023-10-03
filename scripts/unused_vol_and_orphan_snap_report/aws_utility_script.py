@@ -10,13 +10,14 @@
 #         and the data associated with the volume is unrecoverable
 #================================================================================
 
-import os, sys
+import os, sys, re
 import boto3
 import argparse
 import datetime
 import csv
 import shlex
 import subprocess
+from botocore.exceptions import ClientError
 
 # check aws cli installation
 def check_aws_cli():
@@ -30,6 +31,77 @@ def list_all_regions():
     client = boto3.client('ec2')
     regions = [region['RegionName'] for region in client.describe_regions()['Regions']]
     return regions
+
+# Get instance_id, image_id from description
+def parse_description(description):
+    regex = r"^Created by CreateImage\((.*?)\) for (.*?) "
+    matches = re.finditer(regex, description, re.MULTILINE)
+    for matchNum, match in enumerate(matches):
+        return match.groups()
+    return '', ''
+
+# Check if vol with the vol_id exists
+def volume_exists(volume_id, ec2):
+    if not volume_id:
+        return False
+    try:
+        ec2.describe_volumes(VolumeIds=[volume_id])
+        return True
+    except ClientError:
+        return False
+
+# Check if instance with instance_id exists
+def instance_exists(instance_id, ec2):
+    if not instance_id:
+        return ''
+    try:
+        return len(ec2.describe_instances(InstanceIds=[instance_id])['Reservations']) != 0
+    except ClientError:
+        return False
+
+# Check if image with image_id exists
+def image_exists(image_id, ec2):
+    if not image_id:
+        return ''
+    try:
+        return len(ec2.describe_images(ImageIds=[image_id])['Images']) != 0
+    except ClientError:
+        return False
+        
+# Get all snapshots.
+def get_snapshots(region):
+    ec2 = boto3.client('ec2', region_name=region)
+    for snapshot in ec2.describe_snapshots(OwnerIds=['self'])['Snapshots']:
+        instance_id, image_id = parse_description(snapshot['Description'])
+        yield {
+            'id': snapshot['SnapshotId'],
+            'description': snapshot['Description'],
+            'start_time': snapshot['StartTime'],
+            'size': snapshot['VolumeSize'],
+            'volume_id': snapshot['VolumeId'],
+            'volume_exists': volume_exists(snapshot['VolumeId'],ec2),
+            'instance_id': instance_id,
+            'instance_exists': instance_exists(instance_id, ec2),
+            'ami_id': image_id,
+            'ami_exists': image_exists(image_id, ec2),
+        }
+
+# write orphan snapshot to csv file
+def write_orphan_snapshot_to_csv(snap_id, region, action):
+    data = [snap_id, region, action]
+    with open('orphan_snapshots.csv', 'a', encoding='UTF8', newline='') as f:
+        writer = csv.writer(f)
+        writer.writerow(data)
+
+# Get orphan snapshot
+def get_orphan_snapshot_and_gen_report():
+    listOfRegions = list_all_regions()
+    write_orphan_snapshot_to_csv("SNAPSHOT_IDS","REGION","ACTION")
+    for count, region in enumerate(listOfRegions):
+        print("checking orphan snapshot for",region)
+        for snapshot in get_snapshots(region):
+            if not snapshot['volume_exists'] and not snapshot['ami_exists'] and not snapshot['instance_exists']:
+                write_orphan_snapshot_to_csv(snapshot['id'], region, "DEL")
 
 # get the unused volume for all region
 def get_unused_vol(region):
@@ -63,72 +135,6 @@ def del_volume(client, volume_to_delete):
     # client.delete_volume(VolumeId = volume_to_delete)
     pass
 
-# get the orphan snapshot on all region
-def read_snap_from_file(orphan_snap_report_file):
-    snapshots_list = []
-    with open(orphan_snap_report_file,'r') as f:
-        for line in f:
-            for word in line.split():
-               snapshots_list.append(word)
-    return snapshots_list
-
-# write orphan snapshot to csv and generate report
-def write_orphan_snapshot_to_csv(orphan_snap_report_file, region, snap_row, count):
-    if count == 0:
-        header = ["SNAPSHOT_IDS","REGION","ACTION"]
-        with open('orphan_snapshots.csv', 'a', encoding='UTF8', newline='') as f:
-            writer = csv.writer(f)
-            writer.writerow(header)
-            writer.writerows(snap_row)
-    else:
-        with open('orphan_snapshots.csv', 'a', encoding='UTF8', newline='') as f:
-            writer = csv.writer(f)
-            writer.writerows(snap_row)
-            if snap_row:
-                print("Orphan Snapshot")
-                print(snap_row)
-
-# read orphan snapshot from bash and write to text file
-def read_orphan_snapshot(aws_account_id, orphan_snap_report_file, region, count):
-    orphaned_snapshot_ids = "echo $(comm -23 <(aws ec2 describe-snapshots --owner-ids "+aws_account_id+" \
-        --query  'Snapshots[*].SnapshotId' --output text | tr '\\t' '\\n' | sort) <(aws ec2 \
-        describe-images --filters Name=state,Values=available --owners "+aws_account_id+" --query \
-        'Images[*].BlockDeviceMappings[*].Ebs.SnapshotId' --output text | tr '\\t' '\\n' | sort | uniq))"
-    proc = subprocess.call(['bash', '-c', orphaned_snapshot_ids +' > '+ orphan_snap_report_file])
-    if proc == 0:
-        if os.stat(orphan_snap_report_file).st_size == 0:
-            print("Orphan Snapshot not found")
-            sys.exit(0)
-
-        snapshots_list = read_snap_from_file(orphan_snap_report_file)
-        snap_row = []
-        for snapshots in snapshots_list:
-            snap_row.append([snapshots,region,"DEL"])
-        write_orphan_snapshot_to_csv(orphan_snap_report_file, region, snap_row, count)
-
-# get the default region set by user
-def get_default_region(region_filename):
-    default_region = "aws configure get region"
-    proc = subprocess.call(['bash', '-c', default_region+' > '+region_filename])
-
-# set the default region use by user
-def set_default_region(region_filename):
-    f = open(region_filename, "r")
-    default_region = f.read().strip()
-    set_region(default_region)
-    remove_temp_file(region_filename)
-
-# set the regions to get the orphan snapshot
-def set_region(region):
-    update_region = "aws configure set default.region "+region
-    proc = subprocess.call(['bash', '-c', update_region])
-
-# remove intermediate files
-def remove_temp_file(report_file):
-    proc = subprocess.call(['bash', '-c', 'rm -rf '+report_file])
-    if proc == 0:
-        pass
-
 # create backup of old report
 def renamed_old_report():
     orphan_snapshots_file = "orphan_snapshots.csv"
@@ -147,16 +153,6 @@ def verify_args(args):
         sys.exit(2)
     return args
 
-# get orphan snapshot for all regions
-def get_orphan_snapshot_and_gen_report(aws_account_id, orphan_snap_report_file, region_filename):
-    listOfRegions = list_all_regions()
-    if not aws_account_id:
-        aws_account_id = "self"
-    for count, region in enumerate(listOfRegions):
-        set_region(region)
-        read_orphan_snapshot(aws_account_id, orphan_snap_report_file, region, count)
-    remove_temp_file(orphan_snap_report_file)
-
 # get unused volume and geneate report
 def get_unused_vol_and_gen_report():
     listOfRegions = list_all_regions()
@@ -168,10 +164,6 @@ def get_unused_vol_and_gen_report():
     write_unused_vol_to_csv(data)
 
 def main():
-    aws_account_id = ""
-    region_filename = ".region_file"
-    orphan_snap_report_file = ".output_file"
-
     parser = argparse.ArgumentParser(description="Script to report unused volumes and orphan snapshots to CSV file.")
     parser.add_argument("-a","--action", dest="action", type=str, help="Action can be either of the two values report_unused_vol / report_orphan_snapshot")
     
@@ -185,9 +177,7 @@ def main():
     if action.lower() == "report_unused_vol":
         get_unused_vol_and_gen_report()
     elif action.lower() == "report_orphan_snapshot":
-        default_region = get_default_region(region_filename)
-        get_orphan_snapshot_and_gen_report(aws_account_id, orphan_snap_report_file, region_filename)
-        set_default_region(region_filename)
+        get_orphan_snapshot_and_gen_report()
     else:
         print("usage: aws_utility_script.py -a report_unused_vol or aws_utility_script.py -a report_orphan_snapshot")
 

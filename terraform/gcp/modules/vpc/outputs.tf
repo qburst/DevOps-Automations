@@ -4,11 +4,11 @@ output "vpc_id" {
 }
 
 output "subnet_id" {
-  value = google_compute_subnetwork.default.*.id
+  value       = google_compute_subnetwork.default.*.id
   description = "The ID of the subnets created"
 }
 
 output "manual_nat_ips" {
-    value = google_compute_address.address.*.address
-    description = "The IPs allocated to manual nats"
+  value       = google_compute_address.address.*.address
+  description = "The IPs allocated to manual nats"
 }
