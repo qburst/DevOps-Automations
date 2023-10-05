@@ -33,8 +33,8 @@ resource "aws_eks_node_group" "nodes_general" {
   node_group_name = var.eks_node_group_name
   node_role_arn = aws_iam_role.nodes_general.arn
 subnet_ids = [
-    aws_subnet.private_us_east_1a,
-    aws_subnet.private_us_east_1b
+    aws_subnet.private_us_east_1a.id,
+    aws_subnet.private_us_east_1b.id
 ]
 scaling_config {
   desired_size = 1
@@ -50,7 +50,7 @@ instance_types = ["t3.small"]
 labels = {
     role = "nodes_general"
 }
-version = "1.18"
+version = "1.23"
 
 depends_on = [ 
     aws_iam_role_policy_attachment.amazon_eks_worker_node_policy_general,
