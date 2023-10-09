@@ -1,7 +1,7 @@
 resource "aws_iam_role" "nodes_general" {
   name = "eks-node-groupgeneral"
   assume_role_policy = <<POLICY
-  {
+{
   "Version": "2012-10-17",
   "Statement": [
     {
@@ -14,6 +14,7 @@ resource "aws_iam_role" "nodes_general" {
   ]
 }
 POLICY
+
 }
 resource "aws_iam_role_policy_attachment" "amazon_eks_worker_node_policy_general" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
