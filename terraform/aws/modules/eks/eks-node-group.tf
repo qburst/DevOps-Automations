@@ -51,7 +51,7 @@ instance_types = ["t3.small"]
 labels = {
     role = "nodes_general"
 }
-version = "1.23"
+version = "1.24"
 
 depends_on = [ 
     aws_iam_role_policy_attachment.amazon_eks_worker_node_policy_general,
