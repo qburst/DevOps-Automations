@@ -22,6 +22,8 @@ The project is organized into the following directories and files:
 
   - `provider.tf`: Configures the Terraform provider for AWS and specifies the default AWS region.
   - `main.tf`: Calls the EKS module and passes input variables to create an EKS cluster and its associated infrastructure.
+  - `app.yaml`:YAML file for deploying a sample NGINX web application in the EKS cluster.
+
 
 ## Prerequisites
 
@@ -29,7 +31,7 @@ Before using this Terraform configuration, ensure you have the following prerequ
 
 1. [Terraform](https://www.terraform.io/) (v1.5.0 or later) installed.
 2. AWS CLI configured with appropriate access credentials.
-
+3. [kubectl](https://kubernetes.io/docs/tasks/tools/) (or managing the EKS cluster).
 
 ## Configuration
 You can customize the configuration by modifying the input variables in the main.tf file. The following are the available input variables:
@@ -66,6 +68,18 @@ To use this Terraform project, follow these steps:
 5. Apply the Terraform configuration to create the Lambda function and associated resources:
    ```bash
    terraform apply
+   ```
+6. Configure kubectl:
+   ```bash
+    aws eks --region <region> update-kubeconfig --name <cluster-name>
+    ```
+7. Deploy NGINX Web Application:
+   ```bash
+   kubectl apply -f app.yaml
+   ```
+8. Access the Application:
+   After a few moments, you should be able to access the NGINX web application using the Load Balancer's DNS name or IP address.
+   
 
 **Cleanup**
 
