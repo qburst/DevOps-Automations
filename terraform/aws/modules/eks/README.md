@@ -6,7 +6,7 @@ This Terraform project sets up an Amazon Web Services (AWS) Elastic Kubernetes S
 
 The project is organized into the following directories and files:
 
-- **/home/rithin/Documents/Code/DevOps-OpenSource/DevOps-Automations/terraform/aws/modules/eks**: This directory contains the Terraform modules for setting up the EKS cluster and related infrastructure components.
+- **/DevOps-Automations/terraform/aws/modules/eks**: This directory contains the Terraform modules for setting up the EKS cluster and related infrastructure components.
 
   - `eks-node-group.tf`: Defines the EKS node group resources, including the IAM role, policies, and the node group itself.
   - `eks.tf`: Configures the EKS cluster, including IAM roles and policies.
@@ -18,7 +18,7 @@ The project is organized into the following directories and files:
   - `variables.tf`: Declares input variables used throughout the module.
   - `outputs.tf`: Defines the output values of the module.
 
-- **/home/rithin/Documents/Code/DevOps-OpenSource/DevOps-Automations/terraform/aws/examples/eks**: This directory contains example configurations that use the EKS module defined in the `modules/eks` directory.
+- **/DevOps-Automations/terraform/aws/examples/eks**: This directory contains example configurations that use the EKS module defined in the `modules/eks` directory.
 
   - `provider.tf`: Configures the Terraform provider for AWS and specifies the default AWS region.
   - `main.tf`: Calls the EKS module and passes input variables to create an EKS cluster and its associated infrastructure.
