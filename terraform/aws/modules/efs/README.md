@@ -3,10 +3,6 @@ This module will create EFS. As a part of the module it will generate the follow
 
 - 1 EFS in bursting throughput mode .
 
-NOTE:
------
-We assume that KMS key is already created 
-
 
 ## Inputs
 **Important**
@@ -23,5 +19,4 @@ We assume that KMS key is already created
 | file_system_id | The ID of the file system for which the mount target is intended | :heavy_check_mark: | string | |
 | subnet_id | The ID of the subnet to add the mount target in | :heavy_check_mark: | string | |
 | security_groups | A list of up to 5 VPC security group IDs | :x: | string | |
-
-
+| enable_key_rotation | Variable to set rotation for keys | :x: | bool | false |
