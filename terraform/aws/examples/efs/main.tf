@@ -4,7 +4,7 @@ module "efs" {
   performance_mode = "generalPurpose"
   throughput_mode  = "bursting"
   encryption_set   = true
-  subnet_id        = ["subnet-01234567890abcdef","subnet-01234567890ghijklm"]
+  subnet_id        = ["subnet-01234567890abcdef", "subnet-01234567890ghijklm"]
   security_groups  = ["sg-01234567890abcdef", "sg-01234567890abcdef"]
 
 }

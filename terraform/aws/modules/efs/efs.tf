@@ -13,7 +13,7 @@ resource "aws_efs_file_system" "elastic_file_system" {
 
 # Define the EFS mount target (optional).Added the count logic to ensure that mount targets are created only if subnet is provided and also to create multiple mount targets when using multi-AZ
 resource "aws_efs_mount_target" "efs_mount_target" {
-  count = length(var.subnet_id)
+  count           = length(var.subnet_id)
   file_system_id  = aws_efs_file_system.elastic_file_system.id
   subnet_id       = var.subnet_id[count.index]
   security_groups = var.security_groups
