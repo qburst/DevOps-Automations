@@ -32,7 +32,12 @@ This are various examples build using the above modules.
 
     This module will create a VM instance with the image chosen by the user (defaults to Ubuntu 22.04)
 
-### 6. EFS - AWS
+### 6. Cloud Run v2 - GCP
+[Cloud Run v2 - GCP](/terraform/gcp/modules/cloud_run_v2/run_v2_service.tf)
+
+    This module will create a cloud run service for a public facing web applications or APIs.
+
+### 7. EFS - AWS
 [Elastic File System -AWS](/terraform/aws/modules/efs/efs.tf)
 
     This module will create EFS in AWS via Terraform.
