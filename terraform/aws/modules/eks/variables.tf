@@ -116,7 +116,6 @@ variable "node_group_version" {
   default     = "1.24"
 }
 
-# Define other variables as needed.
 
 
 
