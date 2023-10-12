@@ -15,8 +15,6 @@ resource "google_cloud_run_v2_service" "default" {
     scaling {
       min_instance_count = var.min_instance_count
       max_instance_count = var.max_instance_count
-
-
     }
 
     containers {
@@ -32,7 +30,7 @@ resource "google_cloud_run_v2_service" "default" {
         }
       }
     }
-    
+
     dynamic "vpc_access" {
       for_each = local.connector
       content {
