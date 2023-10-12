@@ -4,48 +4,47 @@ variable "service_name" {
 }
 
 variable "make_public" {
-    type = bool
-    default = false
-  
+  type    = bool
+  default = false
+
 }
 
 variable "location" {
-    type = string
-    default = ""
+  type    = string
+  default = ""
 }
 
 variable "vpc_connector" {
-  type = string
+  type    = string
   default = ""
-  
+
 }
 
 variable "img_url" {
-  type = string
+  type    = string
   default = ""
 }
 
 variable "min_instance_count" {
-  type = number
+  type    = number
   default = 0
 }
 
 variable "max_instance_count" {
-  type = number
+  type    = number
   default = 1
 }
 
 variable "container_port" {
-  type = number
+  type    = number
   default = null
-  
-}
 
+}
 
 variable "container_env" {
   type = list(object({
-    key = string
-    value = string 
+    key   = string
+    value = string
   }))
   default = []
 

@@ -3,49 +3,10 @@ data "google_project" "project" {
 
 locals {
   project = data.google_project.project.project_id
-}
-
-
-resource "google_cloud_run_v2_service" "with_vpc_access" {
-  count = length(var.vpc_connector) > 0 ? 1 : 0
-  name     = var.service_name
-  location = var.location
-  ingress = "INGRESS_TRAFFIC_ALL"
-
-  template {
-    scaling {
-      min_instance_count = var.min_instance_count
-      max_instance_count = var.max_instance_count
-
-
-    }
-
-    containers {
-      image = var.img_url
-      ports {
-        container_port = var.container_port
-      }
-      
-
-
-      dynamic "env" {
-        for_each = var.container_env
-        content {
-          name = env.key
-          value = env.value
-        }
-        
-      }
-    }
-    vpc_access{
-        connector = "projects/${local.project}/locations/${var.location}/connectors/${var.vpc_connector}"
-        egress = "ALL_TRAFFIC"
-      }
-  }
+  connector = length(var.vpc_connector) > 0 ? ["${var.vpc_connector}"] : []
 }
 
 resource "google_cloud_run_v2_service" "default" {
-  count = length(var.vpc_connector) == 0 ? 1 : 0
   name     = var.service_name
   location = var.location
   ingress = "INGRESS_TRAFFIC_ALL"
@@ -63,16 +24,21 @@ resource "google_cloud_run_v2_service" "default" {
       ports {
         container_port = var.container_port
       }
-      
       dynamic "env" {
         for_each = var.container_env
         content {
           name = env.value.key
           value = env.value.value
         }
-        
       }
-
+    }
+    
+    dynamic "vpc_access" {
+      for_each = local.connector
+      content {
+        connector = "projects/${local.project}/locations/${var.location}/connectors/${var.vpc_connector}"
+        egress = "ALL_TRAFFIC"
+      }
     }
   }
 }
