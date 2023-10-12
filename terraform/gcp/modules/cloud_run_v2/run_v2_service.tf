@@ -2,14 +2,14 @@ data "google_project" "project" {
 }
 
 locals {
-  project = data.google_project.project.project_id
+  project   = data.google_project.project.project_id
   connector = length(var.vpc_connector) > 0 ? ["${var.vpc_connector}"] : []
 }
 
 resource "google_cloud_run_v2_service" "default" {
   name     = var.service_name
   location = var.location
-  ingress = "INGRESS_TRAFFIC_ALL"
+  ingress  = "INGRESS_TRAFFIC_ALL"
 
   template {
     scaling {
@@ -25,7 +25,7 @@ resource "google_cloud_run_v2_service" "default" {
       dynamic "env" {
         for_each = var.container_env
         content {
-          name = env.value.key
+          name  = env.value.key
           value = env.value.value
         }
       }
@@ -35,14 +35,14 @@ resource "google_cloud_run_v2_service" "default" {
       for_each = local.connector
       content {
         connector = "projects/${local.project}/locations/${var.location}/connectors/${var.vpc_connector}"
-        egress = "ALL_TRAFFIC"
+        egress    = "ALL_TRAFFIC"
       }
     }
   }
 }
 
 resource "google_cloud_run_service_iam_binding" "default" {
-  count      = var.make_public == true ? 1 : 0
+  count    = var.make_public == true ? 1 : 0
   location = var.location
   service  = var.service_name
   role     = "roles/run.invoker"
