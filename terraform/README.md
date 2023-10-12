@@ -31,3 +31,8 @@ This are various examples build using the above modules.
 [Compute Engine -GCP](/terraform/gcp/modules/compute_engine/compute_engine.tf)
 
     This module will create a VM instance with the image chosen by the user (defaults to Ubuntu 22.04)
+
+### 6. EFS - AWS
+[Elastic File System -AWS](/terraform/aws/modules/efs/efs.tf)
+
+    This module will create EFS in AWS via Terraform.
