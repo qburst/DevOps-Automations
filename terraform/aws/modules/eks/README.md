@@ -47,6 +47,7 @@ Before using this Terraform configuration, ensure you have the following prerequ
 `node_group_instance_types`: List of instance types for the node group.
 `node_group_labels`: Labels for the node group instances.
 `node_group_version`: Version for the node group.
+
 **Variables for VPC Configuration (Referencing External VPC Module)**
 `vpc_cidr_block`: CIDR block for the VPC.
 `private_subnet_cidr_blocks`: CIDR blocks for private subnets.
