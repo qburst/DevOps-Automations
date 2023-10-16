@@ -3,7 +3,7 @@
 ## 1. Find underutilized EC2 machines
 [Under Utilized EC2](/scripts/cpu_traffic_multi_region_under-utilized.py)
 
-This Python script can be used to get a report of the under utilized EC2 instances in Multiple regions. You may replace the mentioned region names with the actual ones seprated by commas. The script uses the CPU threshold as 10 and Traffic (NetworkIn) as 1000 and the period taken is 604800 seconds (1 week). Hence this script will take the report of all such under utilized EC2 instances. 
+This Python script can be used to get a report of the under utilized EC2 instances in Multiple regions. You may replace the mentioned region names with the actual ones seprated by commas. The script uses the CPU threshold as 10 and Traffic (NetworkIn) as 1000 and the period taken is 604800 seconds (1 week). Hence this script will take the report of all such under utilized EC2 instances.
 
 ## 2. WordPress Plugin Updater
 [WordPress Plugin Updater](/scripts/WordPress_plugin_updater.py)
@@ -54,3 +54,8 @@ This script is a bash script to quickly get all logs between 2 timestamps from S
 [Domain Expiry Check Script](/scripts/domain-expiry-check/domain_expiry_checker.sh)
 
 A bash script to monitor the expiration dates of domain names. It fetches domain information using WHOIS queries and send email alerts when domains are about to expire.
+
+## 12. Bucket Lifecycle Script
+[Domain Expiry Check Script](/scripts/bucket-lifecycle/bucket-lifecycle.py)
+
+This is a Python script used to list S3 buckets in a AWS account and lifecycle policies of each S3 bucket using boto3 library.
