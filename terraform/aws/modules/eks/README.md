@@ -33,27 +33,27 @@ Before using this Terraform configuration, ensure you have the following prerequ
 
 **Variables for EKS Cluster Configuration**
 
-`eks_cluster_name`: The name of the EKS cluster.
-`eks_cluster_version`: The version of the EKS cluster.
+- `eks_cluster_name`: The name of the EKS cluster.
+- `eks_cluster_version`: The version of the EKS cluster.
 
 **Variables for EKS Node Group Configuration**
-`node_group_name`: The name of the EKS node group.
-`node_group_desired_size`: Desired size of the node group.
-`node_group_max_size`: Maximum size of the node group.
-`node_group_min_size`: Minimum size of the node group.
-`node_group_ami_type`: AMI type for the node group (e.g., AL2_x86_64).
-`node_group_capacity_type`: Capacity type for the node group (e.g., ON_DEMAND).
-`node_group_disk_size`: Disk size (in GB) for nodes in the group.
-`node_group_instance_types`: List of instance types for the node group.
-`node_group_labels`: Labels for the node group instances.
-`node_group_version`: Version for the node group.
+- `node_group_name`: The name of the EKS node group.
+- `node_group_desired_size`: Desired size of the node group.
+- `node_group_max_size`: Maximum size of the node group.
+- `node_group_min_size`: Minimum size of the node group.
+- `node_group_ami_type`: AMI type for the node group (e.g., AL2_x86_64).
+- `node_group_capacity_type`: Capacity type for the node group (e.g., ON_DEMAND).
+- `node_group_disk_size`: Disk size (in GB) for nodes in the group.
+- `node_group_instance_types`: List of instance types for the node group.
+- `node_group_labels`: Labels for the node group instances.
+- `node_group_version`: Version for the node group.
 
 **Variables for VPC Configuration (Referencing External VPC Module)**
-`vpc_cidr_block`: CIDR block for the VPC.
-`private_subnet_cidr_blocks`: CIDR blocks for private subnets.
-`public_subnet_cidr_blocks`: CIDR blocks for public subnets.
-`availability_zones`: The various availability zones in which to create subnets.
-`ipv4_additional_cidr`: Additional IPv4 CIDR blocks for association with the VPC.
+- `vpc_cidr_block`: CIDR block for the VPC.
+- `private_subnet_cidr_blocks`: CIDR blocks for private subnets.
+- `public_subnet_cidr_blocks`: CIDR blocks for public subnets.
+- `availability_zones`: The various availability zones in which to create subnets.
+- `ipv4_additional_cidr`: Additional IPv4 CIDR blocks for association with the VPC.
 
 Please adjust these variables to match your specific requirements.
 
