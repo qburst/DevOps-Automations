@@ -1,18 +1,27 @@
+import os
+import sys
 import boto3
-from botocore.exceptions import ProfileNotFound
+import configparser
+from botocore.exceptions import ClientError
 
-profile_name = 'temp'
+def check_aws_profile(profile_name):
+    aws_config_path = os.path.expanduser('~/.aws/config')
+    aws_credentials_path = os.path.expanduser('~/.aws/credentials')
+
+    config = configparser.ConfigParser()
+    config.read([aws_config_path, aws_credentials_path])
+
+    if profile_name in config.sections():
+        pass
+    else:
+        print(f"AWS profile '{profile_name}' does not exist.")
+        sys.exit()
+
+profile_name = 'temp-profile'
+check_aws_profile(profile_name)
 
 session = boto3.session.Session(profile_name=profile_name)
 s3_client = session.client('s3')
-
-def profile_check():
-    try:
-        iam_client = session.client('iam')
-        response = iam_client.get_user()
-    except ProfileNotFound:
-        print(f"AWS profile '{profile_name}' does not exist")
-profile_check()
 
 def get_aws_account_id():
     sts = session.client('sts')
@@ -39,6 +48,7 @@ def bucket_lifecycle():
                     print()
             else:
                 print("No Lifecycle Policies")
-        except s3_client.exceptions.NoSuchLifecycleConfiguration:
+        except ClientError:
             print("No Lifecycle Configuration Set")
+            print()
 bucket_lifecycle()
