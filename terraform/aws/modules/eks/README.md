@@ -10,13 +10,9 @@ The project is organized into the following directories and files:
 
   - `eks-node-group.tf`: Defines the EKS node group resources, including the IAM role, policies, and the node group itself.
   - `eks.tf`: Configures the EKS cluster, including IAM roles and policies.
-  - `vpc.tf`: Defines the AWS Virtual Private Cloud (VPC) and its configuration.
-  - `subnets.tf`: Configures the subnets used by the EKS cluster.
-  - `igw.tf`: Sets up the AWS Internet Gateway.
-  - `nat.tf`: Configures the Network Address Translation (NAT) Gateway.
-  - `routes.tf`: Defines the routing tables for private and public subnets.
   - `variables.tf`: Declares input variables used throughout the module.
   - `outputs.tf`: Defines the output values of the module.
+  - `vpc.tf`:  Configures the VPC by calling the external VPC module and specifying input variables such as the CIDR blocks, subnets, availability zones,and NAT gateway settings.
 
 - **/home/rithin/Documents/Code/DevOps-OpenSource/DevOps-Automations/terraform/aws/examples/eks**: This directory contains example configurations that use the EKS module defined in the `modules/eks` directory.
 
@@ -34,14 +30,29 @@ Before using this Terraform configuration, ensure you have the following prerequ
 3. [kubectl](https://kubernetes.io/docs/tasks/tools/) (or managing the EKS cluster).
 
 ## Configuration
-You can customize the configuration by modifying the input variables in the main.tf file. The following are the available input variables:
 
-  `vpc_cidr_block`: The CIDR block for the VPC.
-  `igw_name`: The name for the Internet Gateway.
-  `private_subnet_cidr_blocks`: A list of CIDR blocks for the private subnets.
-  `public_subnet_cidr_blocks`: A list of CIDR blocks for the public subnets.
-  `nat_gateway_name`: The name for the NAT Gateway.
-  `eks_cluster_name`: The name for the EKS cluster.
+**Variables for EKS Cluster Configuration**
+
+`eks_cluster_name`: The name of the EKS cluster.
+`eks_cluster_version`: The version of the EKS cluster.
+
+**Variables for EKS Node Group Configuration**
+`node_group_name`: The name of the EKS node group.
+`node_group_desired_size`: Desired size of the node group.
+`node_group_max_size`: Maximum size of the node group.
+`node_group_min_size`: Minimum size of the node group.
+`node_group_ami_type`: AMI type for the node group (e.g., AL2_x86_64).
+`node_group_capacity_type`: Capacity type for the node group (e.g., ON_DEMAND).
+`node_group_disk_size`: Disk size (in GB) for nodes in the group.
+`node_group_instance_types`: List of instance types for the node group.
+`node_group_labels`: Labels for the node group instances.
+`node_group_version`: Version for the node group.
+**Variables for VPC Configuration (Referencing External VPC Module)**
+`vpc_cidr_block`: CIDR block for the VPC.
+`private_subnet_cidr_blocks`: CIDR blocks for private subnets.
+`public_subnet_cidr_blocks`: CIDR blocks for public subnets.
+`availability_zones`: The various availability zones in which to create subnets.
+`ipv4_additional_cidr`: Additional IPv4 CIDR blocks for association with the VPC.
 
 Please adjust these variables to match your specific requirements.
 
@@ -69,19 +80,27 @@ To use this Terraform project, follow these steps:
    ```bash
    terraform apply
    ```
-6. Configure kubectl:
+6. List the cluster you have just created by running `terraform apply`:
+   ```bash
+   aws eks list-clusters
+   ```
+7. Configure kubectl:
    ```bash
     aws eks --region <region> update-kubeconfig --name <cluster-name>
     ```
-7. Deploy NGINX Web Application:
+8. To get the service :
+   ```bash
+   kubectl get svc
+   ```
+9. Deploy NGINX Web Application:
    ```bash
    kubectl apply -f app.yaml
    ```
-8. Access the Application:
+10. Access the Application:
    
    After a few moments, you should be able to access the NGINX web application using the Load Balancer's DNS name or IP address.
 
-9. Delete NGINX Pods and Service (Before Cleanup):
+11. Delete NGINX Pods and Service (Before Cleanup):
    ```bash
    kubectl delete -f app.yaml
    ```

@@ -24,17 +24,16 @@ resource "aws_iam_role_policy_attachment" "demo_amazon_eks_cluster_policy" {
 
 resource "aws_eks_cluster" "demo" {
   name     = var.eks_cluster_name
-  version  = "1.24"
+  version  = var.eks_cluster_version
   role_arn = aws_iam_role.demo.arn
 
   vpc_config {
-    subnet_ids = [
-      aws_subnet.private_us_east_1a.id,
-      aws_subnet.private_us_east_1b.id,
-      aws_subnet.public_us_east_1a.id,
-      aws_subnet.public_us_east_1b.id
-    ]
+    subnet_ids = concat(
+      module.vpc.private_subnet_ids,
+      module.vpc.public_subnet_ids
+    )
   }
+
 
   depends_on = [aws_iam_role_policy_attachment.demo_amazon_eks_cluster_policy]
 }

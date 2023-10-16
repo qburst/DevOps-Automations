@@ -35,7 +35,10 @@ resource "aws_eks_node_group" "nodes_general" {
   cluster_name    = var.eks_cluster_name
   node_group_name = var.node_group_name
   node_role_arn   = aws_iam_role.nodes_general.arn
-  subnet_ids      = var.node_group_subnet_ids
+  subnet_ids      = concat(
+    module.vpc.private_subnet_ids,
+    module.vpc.public_subnet_ids
+  )
 
   scaling_config {
     desired_size = var.node_group_desired_size
@@ -52,9 +55,9 @@ resource "aws_eks_node_group" "nodes_general" {
   version         = var.node_group_version
 
   depends_on = [
+    aws_eks_cluster.demo,
     aws_iam_role_policy_attachment.amazon_eks_worker_node_policy_general,
     aws_iam_role_policy_attachment.amazon_eks_cni_policy_general,
     aws_iam_role_policy_attachment.amazon_ec2_container_registry_read_only_policy
   ]
 }
-

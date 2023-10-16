@@ -1,33 +1,3 @@
-variable "vpc_cidr_block" {
-  description = "CIDR block for the VPC"
-  type        = string
-  default     = "10.0.0.0/16"
-}
-
-variable "igw_name" {
-  description = "Name for the Internet Gateway"
-  type        = string
-  default     = "qburst-igw"
-}
-
-variable "private_subnet_cidr_blocks" {
-  description = "CIDR blocks for private subnets"
-  type        = list(string)
-  default     = ["10.0.0.0/19", "10.0.32.0/19"]
-}
-
-variable "public_subnet_cidr_blocks" {
-  description = "CIDR blocks for public subnets"
-  type        = list(string)
-  default     = ["10.0.64.0/19", "10.0.96.0/19"]
-}
-
-variable "nat_gateway_name" {
-  description = "Name for the NAT Gateway"
-  type        = string
-  default     = "nat"
-}
-
 variable "eks_cluster_name" {
   type        = string
   description = "Name of the EKS cluster."
@@ -40,26 +10,10 @@ variable "eks_cluster_version" {
   default     = "1.24"
 }
 
-variable "eks_cluster_region" {
-  type        = string
-  description = "AWS region for the EKS cluster."
-  default     = "us-east-1"
-}
-
 variable "node_group_name" {
   type        = string
   description = "Name of the EKS node group."
   default     = "nodes-general"
-}
-
-variable "node_group_subnet_ids" {
-  type        = list(string)
-  description = "List of subnet IDs for the node group."
-  default     = ["subnet-06296791b48518207",
-                "subnet-09b57ef336acf2868",
-                "subnet-0bf698a94602fa750",
-                "subnet-086708cfd5a439019"
-]
 }
 
 variable "node_group_desired_size" {
@@ -115,8 +69,26 @@ variable "node_group_version" {
   description = "Version for the node group."
   default     = "1.24"
 }
+variable "vpc_cidr_block" {
+  description = "CIDR block for the VPC"
+  type        = string
+}
 
-# Define other variables as needed.
+variable "private_subnet_cidr_blocks" {
+  description = "CIDR blocks for private subnets"
+  type        = list(string)
+}
 
-
-
+variable "public_subnet_cidr_blocks" {
+  description = "CIDR blocks for public subnets"
+  type        = list(string)
+}
+variable "availability_zones" {
+  type        = list(string)
+  description = "the various AZs in which to create subnets"
+  default     = []
+}
+variable "ipv4_additional_cidr" {
+  type = list(string)
+  default = [] 
+}
