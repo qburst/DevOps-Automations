@@ -92,3 +92,27 @@ variable "ipv4_additional_cidr" {
   type = list(string)
   default = [] 
 }
+variable "security_group_name" {
+  description = "Name for the EKS cluster security group"
+  type        = string
+  default     = "eks-cluster-sg"
+}
+variable "allowed_mgmt_cidr" {
+  description = "CIDR block for management access (e.g., your IP)"
+  type        = list(string)
+  default     = []
+}
+
+variable "allowed_http_cidr" {
+  description = "CIDR block(s) for HTTP access (e.g., public access)"
+  type        = list(string)
+  default     = []
+}
+variable "vpc_id" {
+}
+variable "public_subnet_ids" {
+  
+}
+variable "private_subnet_ids" {
+  
+}

@@ -1,5 +1,5 @@
 output "eks_cluster_id" {
-  value       = aws_eks_cluster.demo.id
+  value       = aws_eks_cluster.default.id
   description = "The ID of the EKS cluster"
 }
 
