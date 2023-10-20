@@ -12,13 +12,14 @@ The project is organized into the following directories and files:
   - `eks.tf`: Configures the EKS cluster, including IAM roles and policies.
   - `variables.tf`: Declares input variables used throughout the module.
   - `outputs.tf`: Defines the output values of the module.
-  - `vpc.tf`:  Configures the VPC by calling the external VPC module and specifying input variables such as the CIDR blocks, subnets, availability zones, and NAT gateway settings.
-
+  
 - **/DevOps-Automations/terraform/aws/examples/eks**: This directory contains example configurations that use the EKS module defined in the `modules/eks` directory.
 
   - `provider.tf`: Configures the Terraform provider for AWS and specifies the default AWS region.
-  - `main.tf`: Calls the EKS module and passes input variables to create an EKS cluster and its associated infrastructure.
+  - `main.tf`: Calls both the EKS and VPC module and passes input variables to create an EKS cluster and its associated infrastructure within the VPC.
   - `app.yaml`:YAML file for deploying a sample NGINX web application in the EKS cluster.
+
+- **/DevOps-Automations/terraform/aws/modules/vpc**: This directory contains the Terraform module for configuring the VPC.
 
 
 ## Prerequisites
