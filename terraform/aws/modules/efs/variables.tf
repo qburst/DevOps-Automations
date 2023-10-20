@@ -18,12 +18,12 @@ variable "encryption_set" {
   default = true
 }
 variable "subnet_id" {
-  type = list(string)
+  type    = list(string)
   default = []
 
 }
 variable "security_groups" {
-  type = list(string)
+  type    = list(string)
   default = []
 }
 

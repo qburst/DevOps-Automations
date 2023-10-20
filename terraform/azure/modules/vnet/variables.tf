@@ -42,52 +42,52 @@ variable "nsg_name" {
 
 variable "inbound_rules" {
   description = "A map of inbound security rules"
-  default     = {
+  default = {
     rule1 = {
-      name                        = "inbound_rule1"
-      priority                    = 100
-      access                      = "Allow"
-      protocol                    = "TCP"
-      source_port_range           = "*"
-      destination_port_range      = "80"
-      source_address_prefix       = "1.2.3.4"
-      destination_address_prefix  = "10.0.1.0/24"
+      name                       = "inbound_rule1"
+      priority                   = 100
+      access                     = "Allow"
+      protocol                   = "TCP"
+      source_port_range          = "*"
+      destination_port_range     = "80"
+      source_address_prefix      = "1.2.3.4"
+      destination_address_prefix = "10.0.1.0/24"
     }
   }
   type = map(object({
-    name                        = string
-    priority                    = number
-    access                      = string
-    protocol                    = string
-    source_port_range           = string
-    destination_port_range      = string
-    source_address_prefix       = string
-    destination_address_prefix  = string
+    name                       = string
+    priority                   = number
+    access                     = string
+    protocol                   = string
+    source_port_range          = string
+    destination_port_range     = string
+    source_address_prefix      = string
+    destination_address_prefix = string
   }))
 }
 
 variable "outbound_rules" {
   description = "A map of outbound security rules"
-  default     = {
+  default = {
     rule1 = {
-      name                        = "outbound_rule1"
-      priority                    = 100
-      access                      = "Allow"
-      protocol                    = "TCP"
-      source_port_range           = "*"
-      destination_port_range      = "443"
-      source_address_prefix       = "10.0.1.0/24"
-      destination_address_prefix  = "5.6.7.8"
+      name                       = "outbound_rule1"
+      priority                   = 100
+      access                     = "Allow"
+      protocol                   = "TCP"
+      source_port_range          = "*"
+      destination_port_range     = "443"
+      source_address_prefix      = "10.0.1.0/24"
+      destination_address_prefix = "5.6.7.8"
     }
   }
   type = map(object({
-    name                        = string
-    priority                    = number
-    access                      = string
-    protocol                    = string
-    source_port_range           = string
-    destination_port_range      = string
-    source_address_prefix       = string
-    destination_address_prefix  = string
+    name                       = string
+    priority                   = number
+    access                     = string
+    protocol                   = string
+    source_port_range          = string
+    destination_port_range     = string
+    source_address_prefix      = string
+    destination_address_prefix = string
   }))
 }
