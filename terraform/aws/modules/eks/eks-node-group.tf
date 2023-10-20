@@ -36,8 +36,8 @@ resource "aws_eks_node_group" "nodes_general" {
   node_group_name = var.node_group_name
   node_role_arn   = aws_iam_role.nodes_general.arn
   subnet_ids      = concat(
-    module.vpc.private_subnet_ids,
-    module.vpc.public_subnet_ids
+    var.private_subnet_ids,
+    var.public_subnet_ids
   )
 
   scaling_config {
@@ -45,6 +45,12 @@ resource "aws_eks_node_group" "nodes_general" {
     max_size     = var.node_group_max_size
     min_size     = var.node_group_min_size
   }
+
+  lifecycle {
+  ignore_changes = [
+    scaling_config[0].desired_size,
+  ]
+}
 
   ami_type        = var.node_group_ami_type
   capacity_type   = var.node_group_capacity_type
@@ -55,7 +61,7 @@ resource "aws_eks_node_group" "nodes_general" {
   version         = var.node_group_version
 
   depends_on = [
-    aws_eks_cluster.demo,
+    aws_eks_cluster.default,
     aws_iam_role_policy_attachment.amazon_eks_worker_node_policy_general,
     aws_iam_role_policy_attachment.amazon_eks_cni_policy_general,
     aws_iam_role_policy_attachment.amazon_ec2_container_registry_read_only_policy
