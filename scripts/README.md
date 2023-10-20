@@ -49,3 +49,8 @@ The Opensearch snapshot script is a python script which can be used to automate 
 [Download logs from S3 based on timestamp](scripts/download_logs_from_s3.sh)
 
 This script is a bash script to quickly get all logs between 2 timestamps from S3. In the many cases where you need to download logs for debugging, it will help quickly get the logs to your local.
+
+## 11. Domain Expiry Check Script
+[Domain Expiry Check Script](/scripts/domain-expiry-check/domain_expiry_checker.sh)
+
+A bash script to monitor the expiration dates of domain names. It fetches domain information using WHOIS queries and send email alerts when domains are about to expire.
