@@ -1,5 +1,5 @@
 resource "aws_iam_role" "nodes_general" {
-  name = "eks-node-groupgeneral"
+  name               = "eks-node-groupgeneral"
   assume_role_policy = <<POLICY
 {
   "Version": "2012-10-17",
@@ -35,7 +35,7 @@ resource "aws_eks_node_group" "nodes_general" {
   cluster_name    = var.eks_cluster_name
   node_group_name = var.node_group_name
   node_role_arn   = aws_iam_role.nodes_general.arn
-  subnet_ids      = concat(
+  subnet_ids = concat(
     var.private_subnet_ids,
     var.public_subnet_ids
   )
@@ -47,18 +47,18 @@ resource "aws_eks_node_group" "nodes_general" {
   }
 
   lifecycle {
-  ignore_changes = [
-    scaling_config[0].desired_size,
-  ]
-}
+    ignore_changes = [
+      scaling_config[0].desired_size,
+    ]
+  }
 
-  ami_type        = var.node_group_ami_type
-  capacity_type   = var.node_group_capacity_type
-  disk_size       = var.node_group_disk_size
+  ami_type             = var.node_group_ami_type
+  capacity_type        = var.node_group_capacity_type
+  disk_size            = var.node_group_disk_size
   force_update_version = false
-  instance_types  = var.node_group_instance_types
-  labels          = var.node_group_labels
-  version         = var.node_group_version
+  instance_types       = var.node_group_instance_types
+  labels               = var.node_group_labels
+  version              = var.node_group_version
 
   depends_on = [
     aws_eks_cluster.default,

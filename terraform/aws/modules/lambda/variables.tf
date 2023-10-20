@@ -41,5 +41,5 @@ variable "name_prefix" {
 }
 variable "description" {
   description = "description of the lambda-function"
-  
+
 }

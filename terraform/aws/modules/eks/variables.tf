@@ -89,8 +89,8 @@ variable "availability_zones" {
   default     = []
 }
 variable "ipv4_additional_cidr" {
-  type = list(string)
-  default = [] 
+  type    = list(string)
+  default = []
 }
 variable "security_group_name" {
   description = "Name for the EKS cluster security group"
@@ -111,8 +111,8 @@ variable "allowed_http_cidr" {
 variable "vpc_id" {
 }
 variable "public_subnet_ids" {
-  
+
 }
 variable "private_subnet_ids" {
-  
+
 }
