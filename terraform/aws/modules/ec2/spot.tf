@@ -61,7 +61,7 @@ resource "aws_spot_instance_request" "default" {
   }
   lifecycle {
     ignore_changes = [
-      private_ip,
+      private_ip, associate_public_ip_address
     ]
   }
 }

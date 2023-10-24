@@ -4,6 +4,7 @@ data "aws_ami" "ubuntu" {
     name   = "name"
     values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-*"]
   }
+  owners = ["099720109477"]
 }
 
 data "aws_caller_identity" "this" {}
@@ -63,7 +64,7 @@ resource "aws_instance" "default" {
   }
   lifecycle {
     ignore_changes = [
-      private_ip,
+      private_ip, associate_public_ip_address
     ]
   }
 }

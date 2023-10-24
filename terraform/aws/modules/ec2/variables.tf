@@ -24,7 +24,7 @@ variable "ebs_optimized" {
 
 variable "instance_type" {
   type        = string
-  default     = "t2-micro"
+  default     = "t2.micro"
   description = "The type of instance to start. Updates to this field will trigger a stop/start of the EC2 instance."
 }
 
@@ -66,7 +66,7 @@ variable "user_data" {
 
 variable "assign_eip_address" {
   type        = bool
-  default     = true
+  default     = false
   description = "Assign an Elastic IP address to the instance."
   sensitive   = true
 }
@@ -182,7 +182,7 @@ variable "kms_key" {
     enabled                 = true
     description             = "KMS master key" # The description of the key
     id                      = ""               # The ARN of the key that you wish to use if encrypting at rest. If not supplied, uses service managed encryption.
-    alias                   = "alias/ec2-test" # The display name of the alias.
+    alias                   = null
     deletion_window_in_days = 7
     multi_region            = false # Indicates whether the key is a multi-Region (true) or regional (false) key
   }
