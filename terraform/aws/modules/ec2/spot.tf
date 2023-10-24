@@ -47,7 +47,7 @@ resource "aws_spot_instance_request" "default" {
       delete_on_termination = lookup(root_block_device.value, "delete_on_termination", null)
       encrypted             = true
       iops                  = lookup(root_block_device.value, "iops", null)
-      kms_key_id            = var.ssh_key_id == "" ? join("", aws_ssh_key.default[*].arn) : lookup(root_block_device.value, "ssh_key_id", null)
+      kms_key_id            = var.kms_key_id == "" ? join("", aws_kms_key.default[*].arn) : lookup(root_block_device.value, "kms_key_id", null)
       volume_size           = lookup(root_block_device.value, "volume_size", null)
       volume_type           = lookup(root_block_device.value, "volume_type", null)
       tags = {
