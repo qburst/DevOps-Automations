@@ -41,3 +41,8 @@ This are various examples build using the above modules.
 [Elastic File System -AWS](/terraform/aws/modules/efs/efs.tf)
 
     This module will create EFS in AWS via Terraform.
+
+### 8. RDS - AWS
+[Amazon Relational Database service -AWS](/terraform/aws/modules/rds/rds.tf)
+
+    This module will create RDS in AWS via Terraform.
