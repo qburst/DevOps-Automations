@@ -1,0 +1,15 @@
+---
+- include: linux-add-user.yml
+  tags: linux
+
+- include: jenkins-add-user.yml
+  tags: jenkins
+
+- include: aws-add-user.yml
+  tags: aws
+
+- include: mysql-add-user.yml
+  tags: mysql
+
+- include: postgres-add-user.yml
+  tags: postgres

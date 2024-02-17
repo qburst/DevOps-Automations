@@ -1,0 +1,21 @@
+---
+- name: Checking if the user already exists in Linux
+  command: getent passwd {{ users.linux.username }}
+  register: user_check
+  ignore_errors: true
+  when: "ansible_os_family == 'RedHat' or ansible_os_family == 'Debian'"
+
+- debug:
+    var: user_check
+
+- name: Creating new user in Linux
+  user:
+    name: "{{ users.linux.username }}"
+    state: present
+    groups: "{{ users.linux.groups }}"
+    password: "{{ users.linux.password }}"
+    shell: "{{ shell | default('/bin/bash') }}"
+    comment: "{{ comment | default('') }}"
+    update_password: always
+  when: "ansible_os_family == 'RedHat' or ansible_os_family == 'Debian' and user_check.rc != 0"
+
