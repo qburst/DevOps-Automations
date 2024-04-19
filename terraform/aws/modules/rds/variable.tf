@@ -19,7 +19,7 @@ variable "database_name" {
 
 variable "database_user" {
   type        = string
-  description = "Username for the primary DB user. Required unless a `snapshot_identifier` or `replicate_source_db` is provided."
+  description = "Username for the primary DB user."
 }
 
 variable "database_port" {
@@ -65,7 +65,7 @@ variable "storage_throughput" {
 
 variable "allocated_storage" {
   type        = number
-  description = "The allocated storage in GBs. Required unless a `snapshot_identifier` or `replicate_source_db` is provided."
+  description = "The allocated storage in GBs. Required unless a `snapshot_identifier` is provided."
   default     = null
 }
 
@@ -77,7 +77,7 @@ variable "max_allocated_storage" {
 
 variable "engine" {
   type        = string
-  description = "Database engine type. Required unless a `snapshot_identifier` or `replicate_source_db` is provided."
+  description = "Database engine type. Required unless a `snapshot_identifier` is provided."
   default     = null
 
 }
@@ -254,13 +254,6 @@ variable "iam_database_authentication_enabled" {
   description = "Specifies whether or mappings of AWS Identity and Access Management (IAM) accounts to database accounts is enabled"
   default     = false
 }
-
-variable "replicate_source_db" {
-  type        = string
-  description = "Specifies that this resource is a Replicate database"
-  default     = null
-}
-
  
 variable "timeouts" {
   type = object({
@@ -311,4 +304,6 @@ variable "enabled" {
 variable "db-identifier"{
   type        = string
   description = "Database identifer"
+  default = "qb-db"
 }
+
