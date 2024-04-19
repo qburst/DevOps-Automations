@@ -2,27 +2,24 @@ locals {
   
   subnet_ids_provided           = var.subnet_ids != null && length(var.subnet_ids) > 0
   db_subnet_group_name_provided = var.db_subnet_group_name != null && var.db_subnet_group_name != ""
-  is_replica                    = try(length(var.replicate_source_db), 0) > 0
 
   db_subnet_group_name = local.db_subnet_group_name_provided ? var.db_subnet_group_name : (
-    local.is_replica ? null : (
-    local.subnet_ids_provided ? join("", aws_db_subnet_group.default.*.name) : null)
+    local.subnet_ids_provided ? join("", aws_db_subnet_group.default.*.name) : null
   )
+
 
   availability_zone = var.multi_az ? null : var.availability_zone
 }
 
 
 resource "random_password" "db-password" {
-  count = local.is_replica ? 0:1
 
   length           = 16
   special          = true
   override_special = "!#$%&*()-_=+[]{}<>:?"
 }
 
-resource "aws_kms_key" "db_ssm_encrypt" {
-  count = local.is_replica ? 0:1   
+resource "aws_kms_key" "db_ssm_encrypt" { 
   description             = "KMS key for database parameter-store encryption"
   enable_key_rotation     = true
   tags                    = {
@@ -30,13 +27,12 @@ resource "aws_kms_key" "db_ssm_encrypt" {
      }
 }
 
-resource "aws_ssm_parameter" "db-password" {
-  count = local.is_replica ? 0:1   
+resource "aws_ssm_parameter" "db-password" {  
   name        = "/${var.tagname}/DATABASE_PASSWORD"
   description = "SSM Parameter for database password"
   type        = "SecureString"
-  value       = random_password.db-password[count.index].result
-  key_id      = aws_kms_key.db_ssm_encrypt[count.index].arn
+  value       = random_password.db-password.result
+  key_id      = aws_kms_key.db_ssm_encrypt.arn
 
   tags = {
      Name = "${var.tagname}-dbpassword"
@@ -50,14 +46,14 @@ resource "aws_db_instance" "default" {
   
   identifier                  = var.db-identifier
   db_name                     = var.database_name
-  username                    = local.is_replica ? null : var.database_user
-  password                    = local.is_replica ? null : aws_ssm_parameter.db-password[count.index].value
+  username                    = var.database_user
+  password                    = aws_ssm_parameter.db-password.value
   port                        = var.database_port
-  engine                      = local.is_replica ? null : var.engine
-  engine_version              = local.is_replica ? null : var.engine_version
+  engine                      = var.engine
+  engine_version              = var.engine_version
   character_set_name          = var.charset_name
   instance_class              = var.instance_class
-  allocated_storage           = local.is_replica ? null : var.allocated_storage
+  allocated_storage           = var.allocated_storage
   max_allocated_storage       = var.max_allocated_storage
   storage_encrypted           = var.storage_encrypted
   kms_key_id                  = var.kms_key_arn
@@ -83,7 +79,6 @@ resource "aws_db_instance" "default" {
   backup_window               = var.backup_window
   
   deletion_protection         = var.deletion_protection
-  replicate_source_db         = var.replicate_source_db
   timezone                    = var.timezone
     vpc_security_group_ids = compact(
     concat(
@@ -141,40 +136,17 @@ resource "aws_security_group" "default" {
   tags        =  {
            Name = "${var.tagname}-sg-rds"
      }
+  ingress {
+    from_port        = var.database_port
+    to_port          = var.database_port
+    protocol         = "tcp"
+    cidr_blocks      = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+  }
 }
-
-resource "aws_security_group_rule" "ingress_security_groups" {
-  count = length(var.security_group_ids) > 0 ? 1 : 0
-  
-  description              = "Allow inbound traffic from existing Security Groups"
-  type                     = "ingress"
-  from_port                = var.database_port
-  to_port                  = var.database_port
-  protocol                 = "tcp"
-  source_security_group_id = var.security_group_ids[count.index]
-  security_group_id        = join("", aws_security_group.default.*.id)
-}
-
-resource "aws_security_group_rule" "ingress_cidr_blocks" {
-  count = length(var.allowed_cidr_blocks) > 0 ? 1 : 0
-
-  description       = "Allow inbound traffic from CIDR blocks"
-  type              = "ingress"
-  from_port         = var.database_port
-  to_port           = var.database_port
-  protocol          = "tcp"
-  cidr_blocks       = var.allowed_cidr_blocks
-  security_group_id = join("", aws_security_group.default.*.id)
-}
-
-resource "aws_security_group_rule" "egress" {
-
-  description       = "Allow all egress traffic"
-  type              = "egress"
-  from_port         = 0
-  to_port           = 0
-  protocol          = "-1"
-  cidr_blocks       = ["0.0.0.0/0"]
-  security_group_id = join("", aws_security_group.default.*.id)
-}
-
