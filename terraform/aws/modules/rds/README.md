@@ -56,13 +56,18 @@ Before using this Terraform configuration, ensure you have the following prerequ
 | Name | Description | Type |
 |------|-------------|:--------:|
 |database_port | Database port Used in the DB Security Group to allow access to the DB instance from the provided `security_group_ids` | `number` |
-| database_user | Username for the primary DB user. Required unless a `snapshot_identifier` or `replicate_source_db` is provided | `string` |
-| engine | Database engine type. Required unless a `snapshot_identifier` or `replicate_source_db` is provided. | `string` |
+| database_user | Username for the primary DB user, Required unless a snapshot_identifier is provided.| `string` |
+| engine | Database engine type. | `string` |
 | engine_version | Database engine version, depends on engine type | `string` |
 | instance_class | Class of RDS instance | `string` |
 | vpc_id | VPC ID the DB instance will be created in | `string` |
-| allocated_storage | The allocated storage in GBs. Required unless a `snapshot_identifier` or `replicate_source_db` is provided | `number` |
+| allocated_storage | The allocated storage in GBs, Required unless a snapshot_identifier is provided.| `number` |
 | subnet_ids | List of subnet IDs for the DB. DB instance will be created in the VPC associated with the DB subnet group provisioned using the subnet IDs.| `list(string)` |
+|| db-identifier    | Identifier for the RDS DB instance. | `string`     |
+| database_name    | Name of the database to be created on the RDS instance.  | `string`     |
+| snapshot_identifier  |  whether or not to create this database from a snapshot. This correlates to the snapshot ID you'd find in the RDS console. | `string`  |
+
+
 
 
 
@@ -91,6 +96,19 @@ To use this Terraform project, follow these steps:
 5. Apply the Terraform configuration to create the Lambda function and associated resources:
    ```bash
    terraform apply
+
+## Note:
+
+To establish a connection with the database, follow these steps:
+
+1. Create an EC2 instance in the same VPC where the RDS is deployed.
+2. Install MySQL or any appropriate database client on the EC2 instance.
+4. Retrieve the database password securely from AWS Systems Manager Parameter Store
+3. Use the following connection command:
+
+```bash
+mysql -h <RDS_endpoint> -u <username> -p
+
 
 
 **Cleanup**
