@@ -1,6 +1,6 @@
 resource "aws_lambda_function" "lambda" {
   function_name    = var.function_name
-  description = var.description
+  description      = var.description
   handler          = var.handler
   runtime          = var.runtime
   filename         = var.source_code_path
@@ -9,8 +9,8 @@ resource "aws_lambda_function" "lambda" {
   environment {
     variables = var.environment_variables
   }
-  timeout         = var.timeout
-  memory_size     = var.memory_size
+  timeout     = var.timeout
+  memory_size = var.memory_size
   tags = {
     Name = "${var.name_prefix}-lambda"
   }
@@ -36,10 +36,10 @@ resource "aws_iam_role" "lambda_execution_role" {
     Name = "${var.name_prefix}-lambda-role"
   }
 }
- # Attach IAM policies dynamically
+# Attach IAM policies dynamically
 resource "aws_iam_policy_attachment" "lambda_policy_attachment" {
   count      = length(var.policy_arns)
-  name       = "lambda-policy-attachment-${count.index}"  # Unique name for each attachment
+  name       = "lambda-policy-attachment-${count.index}" # Unique name for each attachment
   policy_arn = var.policy_arns[count.index]
   roles      = [aws_iam_role.lambda_execution_role.name]
 }

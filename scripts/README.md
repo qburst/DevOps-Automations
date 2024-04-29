@@ -50,12 +50,17 @@ The Opensearch snapshot script is a python script which can be used to automate 
 
 This script is a bash script to quickly get all logs between 2 timestamps from S3. In the many cases where you need to download logs for debugging, it will help quickly get the logs to your local.
 
-## 11. Domain Expiry Check Script
+## 11. Get logs from RDS based on time stamp
+[Download logs from RDS based on timestamp](scripts/download_logs_from_rds.sh)
+
+This script is a bash script to quickly get all logs between 2 timestamps for a particular RDS. In the many cases where you need to download logs for debugging, it will help quickly get the logs to your local.
+
+## 12. Domain Expiry Check Script
 [Domain Expiry Check Script](/scripts/domain-expiry-check/domain_expiry_checker.sh)
 
 A bash script to monitor the expiration dates of domain names. It fetches domain information using WHOIS queries and send email alerts when domains are about to expire.
 
-## 12. Bucket Lifecycle Script
+## 13. Bucket Lifecycle Script
 [Domain Expiry Check Script](/scripts/bucket-lifecycle/bucket-lifecycle.py)
 
 This is a Python script used to list S3 buckets in a AWS account and lifecycle policies of each S3 bucket using boto3 library.

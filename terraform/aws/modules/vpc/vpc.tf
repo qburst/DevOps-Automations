@@ -46,8 +46,8 @@ resource "aws_subnet" "public" {
 
 # Elastic IP
 resource "aws_eip" "nat_gw" {
-  count = length(var.public_subnets_cidr) > 0 && var.nat_gw_enabled ? 1 : 0
-  vpc   = true
+  count  = length(var.public_subnets_cidr) > 0 && var.nat_gw_enabled ? 1 : 0
+  domain = "vpc"
 
   tags = {
     Name = "${var.name_prefix}-nat-eip"

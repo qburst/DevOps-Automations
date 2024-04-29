@@ -10,7 +10,7 @@ variable "ipv4_primary_cidr_block" {
 
 variable "ipv4_additional_cidr_block_associations" {
   type    = list(string)
-  default = [""]
+  default = []
 }
 
 variable "instance_tenancy" {
