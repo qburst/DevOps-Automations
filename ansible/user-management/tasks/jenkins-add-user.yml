@@ -1,19 +1,19 @@
 ---
 - name: Adding new user to Jenkins
   jenkins_script:
-    url: "{{ users.jenkins.jenkins_host }}"
-    user: "{{ users.jenkins.admin_username }}"
-    password: "{{ users.jenkins.admin_password }}"
+    url: "{{ item.jenkins_host }}"
+    user: "{{ item.admin_username }}"
+    password: "{{ item.admin_password }}"
     script: |
       import jenkins.model.*
       import hudson.security.*
 
       def instance = Jenkins.getInstance()
-      def existingUser = instance.securityRealm.allUsers.find {it.id == "{{ users.jenkins.new_username }}"}
+      def existingUser = instance.securityRealm.allUsers.find {it.id == "{{ item.new_username }}"}
       println "Value of existingUser: $existingUser"
       if (existingUser == null) {
         def hudsonRealm = new HudsonPrivateSecurityRealm(false)
-        hudsonRealm.createAccount("{{ users.jenkins.new_username }}","{{ users.jenkins.new_password }}")
+        hudsonRealm.createAccount("{{ item.new_username }}","{{ item.new_password }}")
         instance.setSecurityRealm(hudsonRealm)
         instance.save()
       }
@@ -21,7 +21,9 @@
         println("user already exists")
       }
   register: result
+  with_items: "{{ users.jenkins }}"
 
 - name: Printing result
   debug:
     var: result
+  with_items: "{{ users.jenkins }}"

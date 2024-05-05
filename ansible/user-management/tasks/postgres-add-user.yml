@@ -1,25 +1,27 @@
   - name: Querying PostgreSQL for user existence
     community.general.postgresql_query:
-      db: "{{ users.postgres.postgres_db }}"  # Replace with the correct database name
-      login_host: "{{ users.postgres.postgres_host }}" # Replace with the correct host name
-      login_user: "{{ users.postgres.postgres_root_user }}"  # Assuming default PostgreSQL superuser
-      login_password: "{{ users.postgres.postgres_root_password }}"  # Specify the password for the PostgreSQL superuser
-      query: "SELECT 1 FROM pg_roles WHERE rolname='{{ users.postgres.postgres_new_user }}'"
+      db: "{{ item.postgres_db }}"  # Replace with the correct database name
+      login_host: "{{ item.postgres_host }}" # Replace with the correct host name
+      login_user: "{{ item.postgres_root_user }}"  # Assuming default PostgreSQL superuser
+      login_password: "{{ item.postgres_root_password }}"  # Specify the password for the PostgreSQL superuser
+      query: "SELECT 1 FROM pg_roles WHERE rolname='{{ item.postgres_new_user }}'"
     register: user_exists
     ignore_errors: true
+    with_items: "{{ users.postgres }}"
 
   - name: Checking if the user already exist
     debug:
       msg: "User already exists"
-    when: user_exists.rowcount > 0
+    when: user_exists.results[0].rowcount > 0
 
   - name: Creating PostgreSQL user
     community.postgresql.postgresql_user:
-      db: "{{ users.postgres.postgres_db }}"  # Replace with the correct database name
-      login_host: "{{ users.postgres.postgres_host }}" # Replace with the correct host name
-      login_user: "{{ users.postgres.postgres_root_user }}" # Assuming default PostgreSQL superuser
-      login_password: "{{ users.postgres.postgres_root_password }}" # Specify the password for the PostgreSQL superuser
-      name: "{{ users.postgres.postgres_new_user }}" # specify the new user
-      password: "{{ users.postgres.postgres_new_password }}" # specify the new user password
+      db: "{{ item.postgres_db }}"  # Replace with the correct database name
+      login_host: "{{ item.postgres_host }}" # Replace with the correct host name
+      login_user: "{{ item.postgres_root_user }}" # Assuming default PostgreSQL superuser
+      login_password: "{{ item.postgres_root_password }}" # Specify the password for the PostgreSQL superuser
+      name: "{{ item.postgres_new_user }}" # specify the new user
+      password: "{{ item.postgres_new_password }}" # specify the new user password
       priv: "ALL"  # Example privilege; adjust as needed
-    when: user_exists.rowcount == 0
+    when: user_exists.results[0].rowcount == 0
+    with_items: "{{ users.postgres }}"

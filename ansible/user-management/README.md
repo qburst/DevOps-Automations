@@ -68,9 +68,6 @@ You can use --skip-tags to exclude any particular role
 
 ### Ex: ansible-playbook main.yml --skip-tags linux
 
-# License
--------
-
 BSD
 
 # Author Information

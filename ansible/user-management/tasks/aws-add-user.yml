@@ -1,34 +1,39 @@
 ---
 - name: Ensuring AWS IAM User does not exist
   amazon.aws.iam_user_info:
-    name: "{{ users.aws.username }}"
+    name: "{{ item.username }}"
   register: user_info_result
+  with_items: "{{ users.aws }}"
 
 - name: Creating AWS IAM User
   amazon.aws.iam_user:
-    name: "{{ users.aws.username }}"
+    name: "{{ item.username }}"
     state: present
-    password: "{{ users.aws.password }}"
+    password: "{{ item.password }}"
     password_reset_required: false
   when: user_info_result.iam_users | length == 0
+  with_items: "{{ users.aws }}"
 
 - name: Attaching AWS IAM Policy to IAM User
   amazon.aws.iam_user:
-    name: "{{ users.aws.username }}"
-    managed_policies: "{{ users.aws.policy }}"
+    name: "{{ item.username }}"
+    managed_policies: "{{ item.policy }}"
     state: present
+  with_items: "{{ users.aws }}"
 
 - name: Check if access key exists for the IAM user
   community.aws.iam_access_key_info:
-    user_name: "{{ users.aws.username }}"
+    user_name: "{{ item.username }}"
   register: iam_access_key_info_result
+  with_items: "{{ users.aws }}"
 
 - name: Creating AWS Access key for IAM user
   community.aws.iam_access_key:
-    user_name: "{{ users.aws.username }}"
+    user_name: "{{ item.username }}"
     state: present
   register: iam_access_key_result
   when: iam_access_key_info_result.access_keys | length == 0
+  with_items: "{{ users.aws }}"
 
 - name: Storing Credentials in home folder
   copy:
@@ -36,3 +41,4 @@
     dest: "./aws_credentials.txt"
     mode: "0600"
   when: iam_access_key_info_result.access_keys | length == 0
+  with_items: "{{ users.aws }}"

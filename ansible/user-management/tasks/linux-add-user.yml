@@ -1,21 +1,18 @@
 ---
-- name: Checking if the user already exists in Linux
-  command: getent passwd {{ users.linux.username }}
-  register: user_check
-  ignore_errors: true
-  when: "ansible_os_family == 'RedHat' or ansible_os_family == 'Debian'"
-
-- debug:
-    var: user_check
-
-- name: Creating new user in Linux
+- name: Create user
   user:
-    name: "{{ users.linux.username }}"
+    name: "{{ item.username }}"
+    uid: "{{ item.uid }}"
     state: present
-    groups: "{{ users.linux.groups }}"
-    password: "{{ users.linux.password }}"
-    shell: "{{ shell | default('/bin/bash') }}"
-    comment: "{{ comment | default('') }}"
-    update_password: always
-  when: "ansible_os_family == 'RedHat' or ansible_os_family == 'Debian' and user_check.rc != 0"
+    groups: "{{ item.groups }}"
+    shell: /bin/bash
+    home: "{{ item.home_directory | default('/home/' + item.username) }}"
+  with_items: "{{ users.linux }}"
+
+- name: Add SSH public key to authorized_keys
+  authorized_key:
+    user: "{{ item.username }}"
+    key: "{{ item.ssh_key }}"
+    state: present
+  with_items: "{{ users.linux }}"
 

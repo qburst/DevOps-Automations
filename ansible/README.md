@@ -13,4 +13,4 @@ This is where the various roles resides.
 ### 1. User-management 
 [User management in various tools](/ansible/user-management/main.yml)
 
-    This role will help you to manage/create users in various tools.
+    This role helps you to manage/creates users in different platforms like AWS, Linux, Jenkins, MySQL and Postgres.
