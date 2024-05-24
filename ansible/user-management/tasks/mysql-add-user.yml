@@ -1,0 +1,47 @@
+---
+  - name: Installing MySQL Python library
+    pip:
+      name: 
+        - mysql-client
+        - pymysql
+      executable: pip3 
+    when: ansible_distribution == 'Ubuntu' or ansible_distribution == 'CentOS'
+    ignore_errors: yes
+
+  - name: Checking if MySQL user already exists
+    mysql_query:
+      login_host: "{{ item.mysql_host }}" # Replace with the correct host name
+      login_user: root # Assuming default MySQL superuser
+      login_password: "{{ item.mysql_root_password }}" # Specify the password for the MySQL superuser
+      login_db: mysql # Replace with the correct database name
+      query: "SELECT User FROM mysql.user WHERE User='{{ item.mysql_new_user }}';"
+    register: mysql_user_check
+    with_items: "{{ users.mysql }}"
+
+  - debug:
+      var: mysql_user_check
+    with_items: "{{ users.mysql }}"
+
+  - name: Checking if user exists
+    debug:
+      msg: "User already exists"
+    when: mysql_user_check.rowcount[0] > 0
+    with_items: "{{ users.mysql }}"
+
+  - name: Creating MySQL User
+    mysql_user:
+      name: "{{ item.mysql_new_user }}" # specify the new user
+      password: "{{ item.mysql_new_password }}" # specify the new user password
+      priv: "*.*:ALL"  # Example privilege; adjust as needed
+      state: present
+      login_user: root # Assuming default MySQL superuser
+      login_password: "{{ item.mysql_root_password }}" # Specify the password for the MySQL superuser
+      login_host: "{{ item.mysql_host }}" # Replace with the correct host name
+    when: mysql_user_check.rowcount[0] == 0
+    register: user_creation_result
+    with_items: "{{ users.mysql }}"
+
+  - name: Printing Creation Result
+    debug:
+      var: user_creation_result
+    with_items: "{{ users.mysql }}"

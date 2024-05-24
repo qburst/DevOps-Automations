@@ -1,0 +1,18 @@
+---
+- name: Create user
+  user:
+    name: "{{ item.username }}"
+    uid: "{{ item.uid }}"
+    state: present
+    groups: "{{ item.groups }}"
+    shell: /bin/bash
+    home: "{{ item.home_directory | default('/home/' + item.username) }}"
+  with_items: "{{ users.linux }}"
+
+- name: Add SSH public key to authorized_keys
+  authorized_key:
+    user: "{{ item.username }}"
+    key: "{{ item.ssh_key }}"
+    state: present
+  with_items: "{{ users.linux }}"
+
