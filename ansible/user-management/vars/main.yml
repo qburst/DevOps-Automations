@@ -1,0 +1,39 @@
+---
+users:
+  linux:
+    - username: linux
+      groups: 
+        - docker
+        - qburst
+        - sudo
+      ssh_key: ssh-rsa xyzxyzxyz
+      uid: 4015
+      home_directory: /home/test
+    - username: testuser
+      groups: 
+        - docker
+        - sudo
+      ssh_key: ssh-rsa xyzxyzxyz
+      uid: 5015
+  jenkins:
+    - new_username: jenkins
+      new_password: jenkins@12#
+      jenkins_host: http://localhost:8080
+      admin_username: admin
+      admin_password: admin@12#
+  aws:
+    - username: aws_user
+      password: aws_user@12#
+      policy: AmazonS3FullAccess
+  mysql:
+    - mysql_root_password: root@12#
+      mysql_new_user: mysql
+      mysql_new_password: mysql@12#
+      mysql_host: localhost
+  postgres:
+    - postgres_root_password: root@12#
+      postgres_root_user: root
+      postgres_new_user: postgres_user
+      postgres_new_password: postgres_user@12#
+      postgres_host: localhost
+      postgres_db: root
