@@ -3,7 +3,7 @@ provider "azurerm" {
 }
 
 module "azure_sql_db_flexible" {
-  source = "./terraform-azure-sql-db-flexible"
+  source = "../modules/mysql-db"
 
   resource_group_name                = "sample-resource-group"
   location                           = "Central India"
