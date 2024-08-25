@@ -1,67 +1,77 @@
 #!/bin/bash
 
 ## Set AWS to use --profile ; Please change this as per your use case
-AWS="aws --profile qb"
+AWS="aws --profile dev"
 PREFIX=""
+PARALLEL_DOWNLOADS=10  # Number of parallel downloads
 
 usage() {
 cat << EOF
-This script is used to get all files between 2 timestamps from a specified bucket and prefix. It expects the following inputs
+This script is used to get all files between 2 timestamps from a specified bucket and prefix. It expects the following inputs:
   -b   The name of the BUCKET from where to get files
   -p   The prefix within the BUCKET to get files from. If not specified it defaults to ""
-  -s   All files would be last modified after this time. This must be in YYYY-MM-DDTHH:MM:SS format in UTC.
-  -e   All files would be last modfied before this time. This must be in YYYY-MM-DDTHH:MM:SS format in UTC.
+  -s   Start timestamp in format YYYYMMDDHHMM
+  -e   End timestamp in format YYYYMMDDHHMM
 EOF
 exit 1;
 }
 
 list_files() {
-  $AWS s3api list-objects-v2 --bucket $BUCKET --prefix $PREFIX --query "Contents[?(LastModified>='$START' && LastModified<='$END')].[Key]" --output text
+  local start_timestamp=$(date -d "${START:0:8} ${START:8:2}:${START:10:2}" +%s)
+  local end_timestamp=$(date -d "${END:0:8} ${END:8:2}:${END:10:2}" +%s)
+  
+  local filter=""
+  for ((t = start_timestamp; t <= end_timestamp; t += 60)); do
+    local current_time=$(date -d "@$t" +"%Y%m%d%H%M")
+    if [ -n "$filter" ]; then
+      filter="${filter}|"
+    fi
+    filter="${filter}${current_time}"
+  done
+  
+  echo "Debug: Filter pattern is: $filter" >&2
+  
+  $AWS s3api list-objects-v2 --bucket $BUCKET --prefix $PREFIX --query "Contents[].Key" --output json | 
+  jq -r '.[]' | 
+  grep -E "(${filter})"
 }
 
 get_files() {
   mkdir -p downloaded
-  for file in $FILES
-  do
-    $AWS s3 cp s3://$BUCKET/$file ./downloaded/
-  done
+  echo "$FILES" | xargs -P $PARALLEL_DOWNLOADS -I {} $AWS s3 cp s3://$BUCKET/{} ./downloaded/ --quiet
 }
 
-#main script starts here
+# Main script starts here
 while getopts "b:p:s:e:" option; do
   case $option in
     p) PREFIX=${OPTARG};;
     b) BUCKET=${OPTARG};;
     s) START=${OPTARG}
-    if [[ ! "$START" =~ ^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])T[0-9]{2}:[0-9]{2}:[0-9]{2} ]]
-    then
-      echo "Invalid start date provided."
-      usage
-    fi
-    ;;
+       if [[ ! "$START" =~ ^[0-9]{12}$ ]]; then
+         echo "Invalid start timestamp. Must be in format YYYYMMDDHHMM."
+         usage
+       fi
+       ;;
     e) END=${OPTARG}
-    if [[ ! "$END" =~ ^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])T[0-9]{2}:[0-9]{2}:[0-9]{2} ]]
-    then
-      echo "Invalid start date provided."
-      usage
-    fi
-    ;;
-    *) # display help
-       usage;;
+       if [[ ! "$END" =~ ^[0-9]{12}$ ]]; then
+         echo "Invalid end timestamp. Must be in format YYYYMMDDHHMM."
+         usage
+       fi
+       ;;
+    *) usage;;
   esac
 done
 
-FILES=`list_files`
-COUNT=`echo $FILES| awk -F" " '{print NF}'`
-if [ $COUNT -eq 0 ]
-then
+FILES=$(list_files)
+COUNT=$(echo "$FILES" | wc -l)
+
+if [ $COUNT -eq 0 ]; then
   echo "There are no files matching those conditions. Exiting."
   exit 0
 else
-  echo "There are $COUNT files. Shall we download the same? Enter YES to proceed."
+  echo "There are $COUNT files. Shall we download them? Enter YES to proceed."
   read choice
-  if [ $choice == "YES" ]
-  then
+  if [ "$choice" == "YES" ]; then
     get_files
   else
     echo "Exiting"
