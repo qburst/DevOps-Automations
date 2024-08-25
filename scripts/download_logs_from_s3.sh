@@ -22,7 +22,7 @@ list_files() {
   
   local filter=""
   for ((t = start_timestamp; t <= end_timestamp; t += 60)); do
-    local current_time=$(date -d "@$t" +"%Y%m%d%H%M")
+    local current_time=$(date -d "@$t" +"%Y%m%d.*%H%M")
     if [ -n "$filter" ]; then
       filter="${filter}|"
     fi
