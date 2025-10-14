@@ -1,0 +1,13 @@
+---
+dns_domain: an.example.com
+
+dns_upstream_servers:
+  - 8.8.8.8
+  - 8.8.4.4
+
+dns_static_records: []
+  - { name: 'host1.an.example.com', ip: '192.168.1.10' }
+  - { name: 'host2.an.example.com', ip: '192.168.1.11' }
+
+# dns_cname_records: []
+#  - { cname: 'alias.an.example.com', target: 'host1.an.example.com' }

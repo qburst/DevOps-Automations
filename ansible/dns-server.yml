@@ -1,0 +1,11 @@
+---
+- name: Configure DNS Server using dnsmasq
+  hosts: dns_servers
+  become: yes
+  vars:
+    dns_domain: qburst.int
+    dns_static_records:
+      - { name: 'server1.qburst.int', ip: '10.0.0.10' }
+      - { name: 'server2.qbutst.int', ip: '10.0.0.11' }
+  roles:
+    - role: dns-server

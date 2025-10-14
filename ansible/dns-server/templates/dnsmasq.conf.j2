@@ -1,0 +1,21 @@
+# Default DNS settings
+port=53
+domain-needed
+bogus-priv
+no-resolv
+strict-order
+
+# Local domain
+local=/{{ dns_domain }}/
+domain={{ dns_domain }}
+
+# Upstream DNS servers
+{% for server in dns_upstream_servers %}
+server={{ server }}
+{% endfor %}
+
+# Cache size
+cache-size=1000
+
+# Include all .conf files in /etc/dnsmasq.d/
+conf-dir=/etc/dnsmasq.d/,*.conf
