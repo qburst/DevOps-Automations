@@ -29,7 +29,7 @@
 
 - name: Create new /etc/resolv.conf
   copy:
-    content: "nameserver 127.0.0.1\n"
+    content: "nameserver 8.8.8.8\nnameserver 127.0.0.1\n"
     dest: /etc/resolv.conf
 
 - name: Create directory for custom dnsmasq configs

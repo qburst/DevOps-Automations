@@ -9,6 +9,6 @@
       - { name: 'server2.qbutst.int', ip: '10.0.0.11' }
     dns_listen_addresses:
       - "127.0.0.1"
-      - "10.0.16.124"
+      - "10.0.16.1" # Pls replace with the DNS server's actual IP
   roles:
     - role: dns-server
