@@ -5,9 +5,15 @@ dns_upstream_servers:
   - 8.8.8.8
   - 8.8.4.4
 
-dns_static_records: []
+dns_static_records:
   - { name: 'host1.an.example.com', ip: '192.168.1.10' }
   - { name: 'host2.an.example.com', ip: '192.168.1.11' }
 
-# dns_cname_records: []
+dns_cname_records: []
 #  - { cname: 'alias.an.example.com', target: 'host1.an.example.com' }
+
+# A list of IP addresses for dnsmasq to listen on.
+# By default, it only listens on the loopback interface.
+# Add the server's private IP here to allow other clients to connect.
+dns_listen_addresses:
+  - "127.0.0.1"

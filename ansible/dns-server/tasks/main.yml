@@ -11,6 +11,27 @@
     dest: /etc/dnsmasq.conf
   notify: restart dnsmasq
 
+- name: Stop systemd-resolved service
+  service:
+    name: systemd-resolved
+    state: stopped
+    enabled: no
+
+- name: Disable systemd-resolved service
+  systemd:
+    name: systemd-resolved
+    enabled: no
+
+- name: Remove /etc/resolv.conf
+  file:
+    path: /etc/resolv.conf
+    state: absent
+
+- name: Create new /etc/resolv.conf
+  copy:
+    content: "nameserver 127.0.0.1\n"
+    dest: /etc/resolv.conf
+
 - name: Create directory for custom dnsmasq configs
   file:
     path: /etc/dnsmasq.d
@@ -34,9 +55,3 @@
     name: dnsmasq
     state: started
     enabled: yes
-
-handlers:
-  - name: restart dnsmasq
-    service:
-      name: dnsmasq
-      state: restarted

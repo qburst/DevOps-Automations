@@ -5,6 +5,11 @@ bogus-priv
 no-resolv
 strict-order
 
+# Listen addresses
+{% for addr in dns_listen_addresses %}
+listen-address={{ addr }}
+{% endfor %}
+
 # Local domain
 local=/{{ dns_domain }}/
 domain={{ dns_domain }}
