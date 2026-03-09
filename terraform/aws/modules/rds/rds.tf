@@ -1,5 +1,5 @@
 locals {
-  
+
   subnet_ids_provided           = var.subnet_ids != null && length(var.subnet_ids) > 0
   db_subnet_group_name_provided = var.db_subnet_group_name != null && var.db_subnet_group_name != ""
 
@@ -19,15 +19,15 @@ resource "random_password" "db-password" {
   override_special = "!#$%&*()-_=+[]{}<>:?"
 }
 
-resource "aws_kms_key" "db_ssm_encrypt" { 
-  description             = "KMS key for database parameter-store encryption"
-  enable_key_rotation     = true
-  tags                    = {
-           Name = "${var.tagname}-rds-ssm-kms-key"
-     }
+resource "aws_kms_key" "db_ssm_encrypt" {
+  description         = "KMS key for database parameter-store encryption"
+  enable_key_rotation = true
+  tags = {
+    Name = "${var.tagname}-rds-ssm-kms-key"
+  }
 }
 
-resource "aws_ssm_parameter" "db-password" {  
+resource "aws_ssm_parameter" "db-password" {
   name        = "/${var.tagname}/DATABASE_PASSWORD"
   description = "SSM Parameter for database password"
   type        = "SecureString"
@@ -35,15 +35,15 @@ resource "aws_ssm_parameter" "db-password" {
   key_id      = aws_kms_key.db_ssm_encrypt.arn
 
   tags = {
-     Name = "${var.tagname}-dbpassword"
+    Name = "${var.tagname}-dbpassword"
   }
 }
 
 
 resource "aws_db_instance" "default" {
 
-  count = var.enabled ? 1 : 0 
-  
+  count = var.enabled ? 1 : 0
+
   identifier                  = var.db-identifier
   db_name                     = var.database_name
   username                    = var.database_user
@@ -77,19 +77,19 @@ resource "aws_db_instance" "default" {
   copy_tags_to_snapshot       = var.copy_tags_to_snapshot
   backup_retention_period     = var.backup_retention_period
   backup_window               = var.backup_window
-  
-  deletion_protection         = var.deletion_protection
-  timezone                    = var.timezone
-    vpc_security_group_ids = compact(
+
+  deletion_protection = var.deletion_protection
+  timezone            = var.timezone
+  vpc_security_group_ids = compact(
     concat(
       [join("", aws_security_group.default.*.id)],
       var.associate_security_group_ids
     )
   )
 
-    tags = {
-      Name = "${var.tagname}-rds"
-      }
+  tags = {
+    Name = "${var.tagname}-rds"
+  }
 
 
   iam_database_authentication_enabled   = var.iam_database_authentication_enabled
@@ -121,32 +121,32 @@ resource "aws_db_instance" "default" {
 
 }
 
-  resource "aws_db_subnet_group" "default" {
-  count = local.subnet_ids_provided && !local.db_subnet_group_name_provided ? 1 : 0
+resource "aws_db_subnet_group" "default" {
+  count      = local.subnet_ids_provided && !local.db_subnet_group_name_provided ? 1 : 0
   subnet_ids = var.subnet_ids
-  
+
 }
 
 resource "aws_security_group" "default" {
- 
+
 
   name        = "${var.tagname}-rds-security"
   description = "Allow inbound traffic from the security groups"
   vpc_id      = var.vpc_id
-  tags        =  {
-           Name = "${var.tagname}-sg-rds"
-     }
+  tags = {
+    Name = "${var.tagname}-sg-rds"
+  }
   ingress {
-    from_port        = var.database_port
-    to_port          = var.database_port
-    protocol         = "tcp"
-    cidr_blocks      = ["0.0.0.0/0"]
+    from_port   = var.database_port
+    to_port     = var.database_port
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   egress {
-    from_port        = 0
-    to_port          = 0
-    protocol         = "-1"
-    cidr_blocks      = ["0.0.0.0/0"]
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 }
