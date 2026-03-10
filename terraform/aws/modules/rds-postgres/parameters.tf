@@ -1,5 +1,5 @@
 resource "aws_rds_cluster_parameter_group" "this" {
-  name        = "${var.identifier}-${var.engine_version}"
+  name        = "${var.identifier}-${replace(var.engine_version, ".", "-")}"
   family      = "aurora-postgresql${split(".", var.engine_version)[0]}"
   description = "Cluster parameter group for Aurora PostgreSQL"
 
@@ -14,14 +14,14 @@ resource "aws_rds_cluster_parameter_group" "this" {
 
   tags = merge(
     {
-      Name = "${var.identifier}-${var.engine_version}"
+      Name = "${var.identifier}-${replace(var.engine_version, ".", "-")}"
     },
     var.tags
   )
 }
 
 resource "aws_db_parameter_group" "this" {
-  name        = "${var.identifier}-${var.engine_version}"
+  name        = "${var.identifier}-${replace(var.engine_version, ".", "-")}"
   family      = "aurora-postgresql${split(".", var.engine_version)[0]}"
   description = "DB parameter group for Aurora PostgreSQL"
 
@@ -36,7 +36,7 @@ resource "aws_db_parameter_group" "this" {
 
   tags = merge(
     {
-      Name = "${var.identifier}-${var.engine_version}"
+      Name = "${var.identifier}-${replace(var.engine_version, ".", "-")}"
     },
     var.tags
   )

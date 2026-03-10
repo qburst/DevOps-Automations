@@ -2,3 +2,6 @@
 backend.tf
 .terraform*
 *.swp
+*tfvars
+credentials.json
+*.pem

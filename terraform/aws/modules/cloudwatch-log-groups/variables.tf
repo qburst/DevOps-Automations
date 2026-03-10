@@ -4,7 +4,7 @@ variable "log_group_names" {
 }
 
 variable "kms_key_arn" {
-  description = "ARN of the KMS key used to encrypt log groups at rest."
+  description = "ARN of the KMS key used to encrypt log groups at rest. Key policy must allow CloudWatch Logs service principal (logs.region.amazonaws.com)."
   type        = string
 }
 
