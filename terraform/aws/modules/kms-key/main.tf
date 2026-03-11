@@ -3,9 +3,9 @@ data "aws_region" "current" {}
 
 resource "aws_kms_key" "this" {
   description             = var.description
-  deletion_window_in_days  = var.deletion_window_in_days
-  enable_key_rotation      = var.enable_key_rotation
-  multi_region             = false
+  deletion_window_in_days = var.deletion_window_in_days
+  enable_key_rotation     = var.enable_key_rotation
+  multi_region            = false
 
   policy = var.policy != null ? var.policy : jsonencode({
     Version = "2012-10-17"
