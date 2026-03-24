@@ -101,8 +101,8 @@ variable "instance_class" {
 }
 
 variable "db_subnet_group_name" {
-  type        = string
-  default     = null
+  type    = string
+  default = null
 }
 
 variable "db_parameter_group" {
@@ -254,7 +254,7 @@ variable "iam_database_authentication_enabled" {
   description = "Specifies whether or mappings of AWS Identity and Access Management (IAM) accounts to database accounts is enabled"
   default     = false
 }
- 
+
 variable "timeouts" {
   type = object({
     create = string
@@ -271,10 +271,10 @@ variable "timeouts" {
 }
 
 variable "tagname" {
-  type = string
-  default = "Qb"
+  type        = string
+  default     = "Qb"
   description = "Common name prefix"
-  
+
 }
 
 variable "license_model" {
@@ -296,14 +296,14 @@ variable "associate_security_group_ids" {
 }
 
 variable "enabled" {
-  type        = bool
-  default     = true
-  
+  type    = bool
+  default = true
+
 }
 
-variable "db-identifier"{
+variable "db-identifier" {
   type        = string
   description = "Database identifer"
-  default = "qb-db"
+  default     = "qb-db"
 }
 
