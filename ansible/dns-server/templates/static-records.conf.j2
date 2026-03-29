@@ -1,0 +1,3 @@
+{% for record in dns_static_records | default([]) %}
+address=/{{ record.name }}/{{ record.ip }}
+{% endfor %}

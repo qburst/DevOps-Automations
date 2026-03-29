@@ -1,0 +1,57 @@
+---
+- name: Install dnsmasq
+  apt:
+    name: dnsmasq
+    state: present
+    update_cache: yes
+
+- name: Configure dnsmasq
+  template:
+    src: dnsmasq.conf.j2
+    dest: /etc/dnsmasq.conf
+  notify: restart dnsmasq
+
+- name: Stop systemd-resolved service
+  service:
+    name: systemd-resolved
+    state: stopped
+    enabled: no
+
+- name: Disable systemd-resolved service
+  systemd:
+    name: systemd-resolved
+    enabled: no
+
+- name: Remove /etc/resolv.conf
+  file:
+    path: /etc/resolv.conf
+    state: absent
+
+- name: Create new /etc/resolv.conf
+  copy:
+    content: "nameserver 8.8.8.8\nnameserver 127.0.0.1\n"
+    dest: /etc/resolv.conf
+
+- name: Create directory for custom dnsmasq configs
+  file:
+    path: /etc/dnsmasq.d
+    state: directory
+    mode: '0755'
+
+- name: Create static records file
+  template:
+    src: static-records.conf.j2
+    dest: /etc/dnsmasq.d/static-records.conf
+  notify: restart dnsmasq
+
+- name: Create custom CNAME records file
+  template:
+    src: custom-cname.conf.j2
+    dest: /etc/dnsmasq.d/custom-cname.conf
+  notify: restart dnsmasq
+
+- name: Ensure dnsmasq service is running and enabled
+  service:
+    name: dnsmasq
+    state: started
+    enabled: yes
