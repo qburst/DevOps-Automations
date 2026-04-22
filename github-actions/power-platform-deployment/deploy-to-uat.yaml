@@ -1,0 +1,87 @@
+name: Deploy Power Platform Solution to UAT
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      solution_name:
+        description: "Name of the Power Platform solution"
+        required: true
+        default: "MySolution"
+
+env:
+  # Uses the manual input if provided, otherwise defaults to your demo app name
+  SOLUTION_NAME: ${{ github.event.inputs.solution_name || 'MySolution' }}
+  UAT_ENVIRONMENT_URL: ${{ secrets.UAT_ENVIRONMENT_URL }}
+  SOLUTION_SOURCE_FOLDER: solutions/${{ github.event.inputs.solution_name || 'MySolution' }}
+  SOLUTION_OUTPUT_FOLDER: out/solutions
+  MANAGED_SOLUTION_FILE: out/solutions/${{ github.event.inputs.solution_name || 'MySolution' }}_managed.zip
+
+jobs:
+  build:
+    name: Build – Pack Solution
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Power Platform Tools
+        uses: microsoft/powerplatform-actions/actions-install@v1
+
+      - name: Pack solution from source files
+        uses: microsoft/powerplatform-actions/pack-solution@v1
+        with:
+          solution-folder: ${{ env.SOLUTION_SOURCE_FOLDER }}
+          solution-file: ${{ env.MANAGED_SOLUTION_FILE }}
+          solution-type: Managed
+
+      - name: Upload managed solution artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: managed-solution
+          path: ${{ env.MANAGED_SOLUTION_FILE }}
+          if-no-files-found: error
+
+  deploy-to-uat:
+    name: Deploy – Import to UAT
+    runs-on: ubuntu-latest
+    needs: build
+    environment: UAT  
+    permissions:
+      actions: read
+
+    steps:
+      - name: Download managed solution artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: managed-solution
+          path: ${{ env.SOLUTION_OUTPUT_FOLDER }}
+
+      - name: Install Power Platform Tools
+        uses: microsoft/powerplatform-actions/actions-install@v1
+
+      - name: Authenticate with Power Platform (UAT)
+        uses: microsoft/powerplatform-actions/who-am-i@v1
+        with:
+          environment-url: ${{ env.UAT_ENVIRONMENT_URL }}
+          app-id: ${{ secrets.POWER_PLATFORM_SPN_APP_ID }}
+          client-secret: ${{ secrets.POWER_PLATFORM_SPN_SECRET }}
+          tenant-id: ${{ secrets.POWER_PLATFORM_TENANT_ID }}
+
+      - name: Import solution to UAT
+        uses: microsoft/powerplatform-actions/import-solution@v1
+        with:
+          environment-url: ${{ env.UAT_ENVIRONMENT_URL }}
+          app-id: ${{ secrets.POWER_PLATFORM_SPN_APP_ID }}
+          client-secret: ${{ secrets.POWER_PLATFORM_SPN_SECRET }}
+          tenant-id: ${{ secrets.POWER_PLATFORM_TENANT_ID }}
+          solution-file: ${{ env.MANAGED_SOLUTION_FILE }}
+          force-overwrite: true
+          publish-changes: true
+          run-asynchronously: true

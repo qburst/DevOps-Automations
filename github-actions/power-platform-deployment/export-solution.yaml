@@ -1,0 +1,85 @@
+name: Export Power Platform Solution
+
+on:
+  workflow_dispatch:
+    inputs:
+      solution_name:
+        description: "Name of the Power Platform solution to export"
+        required: true
+        default: "MySolution"
+      branch_name:
+        description: "Name of the new feature branch (e.g., feature/update-app)"
+        required: true
+
+env:
+  SOLUTION_NAME: ${{ github.event.inputs.solution_name }}
+  BRANCH_NAME: ${{ github.event.inputs.branch_name }}
+  SOURCE_ENVIRONMENT_URL: ${{ secrets.DEV_ENVIRONMENT_URL }}
+  SOLUTION_EXPORT_FOLDER: out/exported
+  SOLUTION_SOURCE_FOLDER: solutions/${{ github.event.inputs.solution_name }}
+
+jobs:
+  export-and-commit:
+    runs-on: ubuntu-latest
+    environment: Development
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install Power Platform Tools
+        uses: microsoft/powerplatform-actions/actions-install@v1
+
+      - name: Authenticate with Power Platform
+        uses: microsoft/powerplatform-actions/who-am-i@v1
+        with:
+          environment-url: ${{ env.SOURCE_ENVIRONMENT_URL }}
+          app-id: ${{ secrets.POWER_PLATFORM_SPN_APP_ID }}
+          client-secret: ${{ secrets.POWER_PLATFORM_SPN_SECRET }}
+          tenant-id: ${{ secrets.POWER_PLATFORM_TENANT_ID }}
+
+      - name: Export solution (unmanaged)
+        uses: microsoft/powerplatform-actions/export-solution@v1
+        with:
+          environment-url: ${{ env.SOURCE_ENVIRONMENT_URL }}
+          app-id: ${{ secrets.POWER_PLATFORM_SPN_APP_ID }}
+          client-secret: ${{ secrets.POWER_PLATFORM_SPN_SECRET }}
+          tenant-id: ${{ secrets.POWER_PLATFORM_TENANT_ID }}
+          solution-name: ${{ env.SOLUTION_NAME }}
+          solution-output-file: ${{ env.SOLUTION_EXPORT_FOLDER }}/${{ env.SOLUTION_NAME }}_managed.zip
+          managed: false
+          run-asynchronously: true
+  
+      - name: Unpack solution (extract source files)
+        uses: microsoft/powerplatform-actions/unpack-solution@v1
+        with:
+          solution-file: ${{ env.SOLUTION_EXPORT_FOLDER }}/${{ env.SOLUTION_NAME }}.zip
+          solution-folder: ${{ env.SOLUTION_SOURCE_FOLDER }}
+          solution-type: Unmanaged
+          overwrite-files: true
+
+      - name: Create feature branch, commit, and push
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # 1. Create and switch to the new feature branch
+          git checkout -b ${{ env.BRANCH_NAME }}
+
+          # 2. Add only the unpacked source files
+          git add ${{ env.SOLUTION_SOURCE_FOLDER }}
+
+          # 3. Check for changes and commit
+          if git diff --cached --quiet; then
+            echo "No changes to commit — solution is already up to date."
+          else
+            git commit -m "chore: export and unpack '${{ env.SOLUTION_NAME }}' from Dev [skip ci]"
+            # Push the new branch upstream to GitHub
+            git push -u origin ${{ env.BRANCH_NAME }}
+            echo "Solution source committed and pushed to branch '${{ env.BRANCH_NAME }}' successfully."
+          fi
